@@ -11,6 +11,9 @@ on:
         type: string
       openwrt_branch:
         type: string
+      openwrt_volume_prefix:
+        type: string
+        default: /volume2/storage/docker-data/ubuntu-openwrt/data
 
 defaults:
   run:
@@ -19,10 +22,12 @@ defaults:
 jobs:
   build:
     name: Build ${{ inputs.target }}/${{ inputs.subtarget }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     container:
       image: openwrt/sdk:${{ inputs.target }}-${{ inputs.subtarget }}-${{ inputs.openwrt_branch }}
       options: --user root
+      volumes:
+        - ${{ openwrt_volume_prefix }}/openwrt-sdk-${{ inputs.target }}-${{ inputs.subtarget }}-${{ inputs.openwrt_branch }}/bin:/builder/bin
     steps:
       - name: Set feed.conf
         shell: su buildbot -c "bash {0}"

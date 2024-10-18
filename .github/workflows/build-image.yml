@@ -1,0 +1,35 @@
+name: Build packages
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        required: true
+        type: string
+      subtarget:
+        required: true
+        type: string
+      openwrt_branch:
+        type: string
+      openwrt_volume_prefix:
+        type: string
+        default: /volume2/storage/docker-data/ubuntu-openwrt/data
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: Build ${{ inputs.target }}/${{ inputs.subtarget }}
+    runs-on: self-hosted
+    container:
+      image: openwrt/imagebuilder:${{ inputs.target }}-${{ inputs.subtarget }}-${{ inputs.openwrt_branch }}
+      options: --user root
+    steps:
+      - name: Set feed.conf
+        shell: su buildbot -c "bash {0}"
+        working-directory: /builder
+        run: |
+          id;pwd;ls -al
+          
