@@ -25,10 +25,14 @@ jobs:
     runs-on: self-hosted
     container:
       image: openwrt/sdk:${{ inputs.target }}-${{ inputs.subtarget }}-${{ inputs.openwrt_branch }}
-      options: --user root
+      options: --user root --privileged
       volumes:
         - ${{ inputs.openwrt_volume_prefix }}/openwrt-sdk-${{ inputs.target }}-${{ inputs.subtarget }}-${{ inputs.openwrt_branch }}/bin:/builder/bin
     steps:
+      - name: Modify bin permission
+        working-directory: /builder
+        run: |
+          chown buildbot:buildbot bin
       - name: Set feed.conf
         shell: su buildbot -c "bash {0}"
         working-directory: /builder
