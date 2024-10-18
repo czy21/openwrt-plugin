@@ -69,7 +69,7 @@ jobs:
           echo "Custom packages: $PACKAGES"
           
           for PKG in $PACKAGES;do
-            make BUILD_LOG=1 CONFIG_AUTOREMOVE=y -j "$(nproc)" "package/$PKG/compile"
+            make BUILD_LOG=1 CONFIG_AUTOREMOVE=y -j8 "package/$PKG/compile"
           done
 
           artifact_dir=/builder/bin/artifact
