@@ -17,6 +17,10 @@ function cp_pkg_var(){
   source_makefile=$1
   target_makefile=package/${pkg_name}/Makefile
 
+  if [ "${pkg_name}" == "adguardhome" ];then
+    keys+=" FRONTEND_HASH"
+  fi
+  
   if [ -f "$target_makefile" ];then
     for k in $keys;do
       v=$(sed -n "s|^$k:=.*|\0|p" $source_makefile)
