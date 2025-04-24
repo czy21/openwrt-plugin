@@ -9,6 +9,7 @@
       "iperf3",
       "softethervpn5-server",
       "openssh-client",
+      "ipmitool",
       "luci",
       "luci-compat",
       "luci-proto-wireguard",
