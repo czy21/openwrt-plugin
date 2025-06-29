@@ -41,7 +41,9 @@
       "luci-app-udpxy",
       "luci-app-watchcat",
       "luci-app-ttyd",
-      "luci-app-commands"
+      "luci-app-commands",
+      "luci-app-frpc",
+      "luci-app-frps"
     ],
     "common": [
       "fdisk",
