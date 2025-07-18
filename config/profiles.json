@@ -62,7 +62,8 @@
       "luci-app-aria2",
       "ariang",
       "luci-app-samba4",
-      "luci-app-nfs"
+      "luci-app-nfs",
+      "aliyun-cli"
     ],
     "docker": [
       "kmod-macvlan",
