@@ -2,7 +2,9 @@
   "arch_packages": "aarch64_cortex-a53",
   "profiles": {
     "qihoo_360t7": {
-      "user_configs": [],
+       "user_configs": [
+        "CONFIG_LUCI_LANG_zh-cn=y"
+      ],
       "user_packages": [
         "{{ simple | join(' ') }}",
         "kmod-mac80211",
