@@ -134,7 +134,7 @@ jobs:
             make clean
             make feedsversion
           )
-          python3 -B .github/workflows/scripts/gen_image.py --openwrt-dir /builder --config config --target ${{ matrix.target }}/${{ matrix.subtarget }
+          python3 -B .github/workflows/scripts/gen_image.py --openwrt-dir /builder --config config --target ${{ matrix.target }}/${{ matrix.subtarget }}
 
       - name: Generate version
         shell: su buildbot -c "bash {0}"
