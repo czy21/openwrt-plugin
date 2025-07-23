@@ -132,9 +132,9 @@ jobs:
             cd /builder
             sed -i -e '/device_packages/a\\t\"user_packages\": getenv(\"USER_PACKAGES\","").split(),' scripts/json_add_image_info.py
             make clean
+            (cd /builder;find -maxdepth 1 -name 'repositories*' -exec sh -c 'bin_dir=bin/targets/${{ matrix.target }}/${{ matrix.subtarget }};mkdir -p $bin_dir;cp {} $bin_dir;' \;)
           )
           python3 -B .github/workflows/scripts/gen_image.py --openwrt-dir /builder --config config --target ${{ matrix.target }}/${{ matrix.subtarget }}
-          (cd /builder;find -maxdepth 1 -name 'repositories*' -exec sh -c 'bin_dir=bin/targets/${{ matrix.target }}/${{ matrix.subtarget }};mkdir -p $bin_dir;cp {} $bin_dir;'' \;)
 
       - name: Generate version
         shell: su buildbot -c "bash {0}"
