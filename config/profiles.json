@@ -43,7 +43,8 @@
       "luci-app-ttyd",
       "luci-app-commands",
       "luci-app-frpc",
-      "luci-app-frps"
+      "luci-app-frps",
+      "luci-app-nut"
     ],
     "common": [
       "fdisk",
