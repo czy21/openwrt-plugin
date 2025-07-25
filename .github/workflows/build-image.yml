@@ -109,7 +109,7 @@ jobs:
 
             id;pwd;ls -al
 
-            openwrt_plugin=$(sed -n -e 's|\(.*\)base\(\.*\)|\1plugin\2|p' repositories | sed -e "s|https://downloads.openwrt.org|http://openwrt-download.czy21.com|")
+            openwrt_plugin=$(sed -n -e 's|\(.*\)base\(\.*\)|\1plugin\2|p' repositories | sed -e "s|https://downloads.openwrt.org|https://openwrt-download.czy21.com|")
 
             sed -i -e "1i ${openwrt_plugin}" -e "s|https://downloads.openwrt.org|${openwrt_mirror}|" repositories
 
