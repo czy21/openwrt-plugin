@@ -1,7 +1,4 @@
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# SPDX-License-Identifier: GPL-2.0-only
 
 include $(TOPDIR)/rules.mk
 
@@ -23,7 +20,7 @@ PKG_BUILD_PARALLEL:=1
 PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/aliyun/aliyun-cli/v3
-GO_PKG_LDFLAGS_X:=github.com/aliyun/aliyun-cli/cli.Version=$(PKG_VERSION)
+GO_PKG_LDFLAGS_X:=github.com/aliyun/aliyun-cli//v3/cli.Version=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
@@ -36,13 +33,17 @@ define Package/aliyun-cli
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
+define Package/aliyun-cli/conffiles
+/etc/aliyun/config.json
+endef
+
 define Package/aliyun-cli/description
   The Alibaba Cloud CLI is a tool to manage and use Alibaba Cloud resources through a command line interface.
 endef
 
 define Package/aliyun-cli/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/main $(1)/usr/bin/aliyun-cli
+	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/main $(1)/usr/bin/aliyun
   
 endef
 
