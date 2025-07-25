@@ -33,5 +33,11 @@ jobs:
       - name: Deploy firmware-selector-openwrt-org to local
         run: cp -r feeds/firmware-selector-openwrt-org/www/* /data/firmware/
 
-      - name: Deploy downloads-openwrt-org to local
-        run: cp -rv static/download/* /data/download/
+      - name: Checkout openwrt-download-page
+        uses: actions/checkout@v4
+        with: 
+          repository: aparcar/openwrt-download-page
+          path: feeds/openwrt-download-page
+       
+      - name: Deploy openwrt-download-page to local
+        run: cp -rv feeds/openwrt-download-page/dir-index.cgi /data/download/
