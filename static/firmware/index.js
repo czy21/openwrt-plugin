@@ -730,6 +730,21 @@ function changeModel(version, overview, title) {
         };
       })
       .catch((err) => showAlert(err.message));
+      
+    fetch(`${base_url}/targets/${entry.target}/repositories.conf`, {
+      cache: "no-cache",
+    })
+      .then((obj) => {
+        if (obj.status != 200) {
+          throw new Error(`Failed to fetch ${obj.url}`);
+        }
+        hideAlert();
+        return obj.text();
+      })
+      .then((mobj) => {
+        $("#repositories").value = mobj
+      })
+      .catch((err) => showAlert(err.message));
   } else {
     updateImages();
     current_device = {};
