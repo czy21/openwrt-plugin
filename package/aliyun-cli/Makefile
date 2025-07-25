@@ -20,7 +20,7 @@ PKG_BUILD_PARALLEL:=1
 PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/aliyun/aliyun-cli/v3
-GO_PKG_LDFLAGS_X:=github.com/aliyun/aliyun-cli//v3/cli.Version=$(PKG_VERSION)
+GO_PKG_LDFLAGS_X:=$(GO_PKG)/cli.Version=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
@@ -44,7 +44,6 @@ endef
 define Package/aliyun-cli/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/main $(1)/usr/bin/aliyun
-  
 endef
 
 $(eval $(call GoBinPackage,aliyun-cli))
