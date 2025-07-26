@@ -168,9 +168,8 @@ jobs:
       - name: Generate index
         working-directory: /builder
         shell: su buildbot -c "bash {0}"
-        env:
-          BUILD_KEY: /data/pri.key
         run: |
+          ln -snf /data/pri.key key-build
           sed -i -e 's|--sign $(BUILD_KEY_APK_SEC)|--allow-untrusted|' package/Makefile
           for t in $(find ${{ steps.set_env.outputs.download_packages_dir }} -type d -name 'plugin');do
             echo "Generating index for package ${t}"
