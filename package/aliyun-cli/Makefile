@@ -26,15 +26,15 @@ include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 define Package/aliyun-cli
-  SECTION:=net
-  CATEGORY:=Network
+  SECTION:=utils
+  CATEGORY:=Utilities
   TITLE:=Alibaba Cloud OpenAPI
   URL:=https://github.com/aliyun/aliyun-cli
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
 define Package/aliyun-cli/conffiles
-/etc/aliyun/config.json
+/root/.aliyun/config.json
 endef
 
 define Package/aliyun-cli/description
