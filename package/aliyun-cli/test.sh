@@ -1,3 +1,3 @@
 #!/bin/sh
 
-aliyun --version | grep -F "$PKG_VERSION"
+aliyun | grep -F "$PKG_VERSION"
