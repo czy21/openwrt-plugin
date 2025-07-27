@@ -16,4 +16,5 @@ var config = {
   // Attended Sysupgrade Server support (optional)
   asu_url: "https://openwrt-asu.czy21.com",
   asu_extra_packages: ["luci"],
+  repository_keys: ["RWSYv7CuMTatNjIKHxlsAiKEvMYwGsJtdFv26IOGFGJZQWa9B5U0Sbc/"]
 };

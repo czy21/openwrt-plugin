@@ -92,9 +92,8 @@ function buildAsuRequest(request_hash) {
 
     let status = "";
     if (loading) {
-      status += `<progress style='margin-right: 10px;' max='100' value=${
-        progress[tr] || ""
-      }></progress>`;
+      status += `<progress style='margin-right: 10px;' max='100' value=${progress[tr] || ""
+        }></progress>`;
     }
 
     status += `<span class="${tr}" style='white-space: nowrap;'>${message}</span>`;
@@ -120,6 +119,8 @@ function buildAsuRequest(request_hash) {
     version: $("#versions").value,
     diff_packages: false,
     client: "ofs/" + ofs_version,
+    repositories: $("#repositories").value.includes("src/gz") ? Object.fromEntries($("#repositories").value.split('\n').filter(t => t.startsWith("src/gz")).map(t => [t.split(" ")[1], t.split(" ")[2]])) : {},
+    repository_keys: config.repository_keys || []
   });
   var method = "POST";
 
@@ -537,13 +538,13 @@ function append(parent, tag) {
 function createExtra(image) {
   return htmlToElement(
     "<td>" +
-      (config.show_help
-        ? `<div class="help-content ${getHelpTextClass(image)}"></div>`
-        : "") +
-      (image.sha256
-        ? `<div class="hash-content">sha256sum: ${image.sha256}</div>`
-        : "") +
-      "</td>"
+    (config.show_help
+      ? `<div class="help-content ${getHelpTextClass(image)}"></div>`
+      : "") +
+    (image.sha256
+      ? `<div class="hash-content">sha256sum: ${image.sha256}</div>`
+      : "") +
+    "</td>"
   );
 }
 
@@ -602,12 +603,12 @@ function updateImages(mobj) {
     setValue(
       "#image-link",
       document.location.href.split("?")[0] +
-        "?version=" +
-        encodeURIComponent(mobj.version_number) +
-        "&target=" +
-        encodeURIComponent(mobj.target) +
-        "&id=" +
-        encodeURIComponent(mobj.id)
+      "?version=" +
+      encodeURIComponent(mobj.version_number) +
+      "&target=" +
+      encodeURIComponent(mobj.target) +
+      "&id=" +
+      encodeURIComponent(mobj.id)
     );
 
     mobj.images.sort((a, b) => a.name.localeCompare(b.name));
@@ -665,12 +666,12 @@ function updateImages(mobj) {
       null,
       null,
       document.location.href.split("?")[0] +
-        "?version=" +
-        encodeURIComponent(mobj.version_number) +
-        "&target=" +
-        encodeURIComponent(mobj.target) +
-        "&id=" +
-        encodeURIComponent(mobj.id)
+      "?version=" +
+      encodeURIComponent(mobj.version_number) +
+      "&target=" +
+      encodeURIComponent(mobj.target) +
+      "&id=" +
+      encodeURIComponent(mobj.id)
     );
 
     hide("#notfound");
@@ -730,21 +731,25 @@ function changeModel(version, overview, title) {
         };
       })
       .catch((err) => showAlert(err.message));
-      
-    fetch(`${base_url}/targets/${entry.target}/repositories.conf`, {
-      cache: "no-cache",
-    })
-      .then((obj) => {
-        if (obj.status != 200) {
-          throw new Error(`Failed to fetch ${obj.url}`);
-        }
-        hideAlert();
-        return obj.text();
+    if (version === 'SNAPSHOT') {
+      $("#repositories").value = ""
+    } else {
+      fetch(`${base_url}/targets/${entry.target}/repositories.conf`, {
+        cache: "no-cache",
       })
-      .then((mobj) => {
-        $("#repositories").value = mobj
-      })
-      .catch((err) => showAlert(err.message));
+        .then((obj) => {
+          if (obj.status != 200) {
+            throw new Error(`Failed to fetch ${obj.url}`);
+          }
+          hideAlert();
+          return obj.text();
+        })
+        .then((mobj) => {
+          $("#repositories").value = mobj
+        })
+        .catch((err) => showAlert(err.message));
+    }
+
   } else {
     updateImages();
     current_device = {};
