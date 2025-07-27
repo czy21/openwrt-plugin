@@ -126,6 +126,7 @@ jobs:
             export PATH=$(pwd)/staging_dir/host/bin:$PATH
 
             OPKG_KEYS=keys ./scripts/opkg-key add /data/pub.key
+            OPKG_KEYS=files/etc/opkg/keys ./scripts/opkg-key add /data/pub.key
 
             mkdir -p files/etc/uci-defaults/
             tee files/etc/uci-defaults/99-setup << EOF
