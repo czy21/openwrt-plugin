@@ -44,7 +44,7 @@ if __name__ == '__main__':
             
         if user_configs:
             cmd_arr.append(' '.join(user_configs))
-
+        cmd_arr.append('FILES=files')
         cmd_str = ' '.join(cmd_arr)
         os.system(f"echo \'{cmd_str}\'")
         os.system(cmd_str)

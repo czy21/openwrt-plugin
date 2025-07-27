@@ -119,10 +119,23 @@ jobs:
 
             (cd ${{ steps.set_env.outputs.download_targets_dir }}/../;ln -snf ../$(basename ${{ needs.setup.outputs.artifact_packages_rel }}) packages)
 
-            openwrt_plugin=$(sed -n -e 's|openwrt_base\(.*\)base$|openwrt_plugin\1plugin|p' repositories.conf | sed -e "s|https://downloads.openwrt.org|http://openwrt-download.czy21.com|")
-            sed -i -e "s|https://downloads.openwrt.org|${openwrt_mirror}|" -e 's|^option check_signature|# \0|' -e "\$a ${openwrt_plugin}" repositories.conf
-            
+            openwrt_plugin=$(sed -n -e 's|openwrt_base\(.*\)base$|openwrt_plugin\1plugin|p' repositories.conf | sed -e "s|https://downloads.openwrt.org|https://openwrt-download.czy21.com|")
+            sed -i -e "s|https://downloads.openwrt.org|${openwrt_mirror}|" -e "\$a ${openwrt_plugin}" repositories.conf
             cat repositories.conf
+
+            export PATH=$(pwd)/staging_dir/host/bin:$PATH
+
+            OPKG_KEYS=keys ./scripts/opkg-key add /data/pub.key
+            OPKG_KEYS=files/etc/opkg/keys ./scripts/opkg-key add /data/pub.key
+
+            mkdir -p files/etc/uci-defaults/
+            tee files/etc/uci-defaults/99-setup << EOF
+          #!/bin/sh
+          echo "Replacing distfeeds..."
+          sed -i "s|https://downloads.openwrt.org|${openwrt_mirror}|" /etc/opkg/distfeeds.conf
+          echo "Appending customfeeds..."
+          echo "${openwrt_plugin}" >> /etc/opkg/customfeeds.conf
+          EOF
           fi
         
       - name: Generate image
