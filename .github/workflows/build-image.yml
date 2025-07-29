@@ -20,7 +20,6 @@ jobs:
       openwrt_tag_version: ${{ steps.set_env.outputs.openwrt_tag_version }}
       openwrt_branch: ${{ steps.set_env.outputs.openwrt_branch }}
       openwrt_branch_number: ${{ steps.set_env.outputs.openwrt_branch_number }}
-      openwrt_builder_volume: ${{ steps.set_env.outputs.openwrt_builder_volume }}
       artifact_targets_rel: ${{ steps.set_env.outputs.artifact_targets_rel }}
       artifact_packages_rel: ${{ steps.set_env.outputs.artifact_packages_rel }}
     steps:
@@ -46,7 +45,6 @@ jobs:
             artifact_packages_rel=releases/packages-${openwrt_branch_number}
           fi
 
-          echo "openwrt_builder_volume=${{ vars.OPENWRT_BUILDER_VOLUME }}" >> "$GITHUB_OUTPUT"
           echo "openwrt_branch=${openwrt_branch}" >> "$GITHUB_OUTPUT"
           echo "openwrt_branch_number=${openwrt_branch_number}" >> "$GITHUB_OUTPUT"
           echo "openwrt_tag=${openwrt_tag}" >> "$GITHUB_OUTPUT"
@@ -70,7 +68,7 @@ jobs:
       image: openwrt/imagebuilder:${{ matrix.target }}-${{ matrix.subtarget }}-${{ needs.setup.outputs.openwrt_tag }}
       volumes:
         - openwrt-ib-${{ matrix.target }}-${{ matrix.subtarget }}-${{ needs.setup.outputs.openwrt_tag }}:/builder
-        - ${{ needs.setup.outputs.openwrt_builder_volume }}/:/data/
+        - openwrt-share:/data/
       options: --user root --privileged --pull always
     steps:
       - name: Checkout

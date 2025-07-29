@@ -15,7 +15,6 @@ jobs:
     outputs:
       archs: ${{ steps.set_env.outputs.archs }}
       branchs: ${{ steps.set_env.outputs.branchs }}
-      openwrt_builder_volume: ${{ steps.set_env.outputs.openwrt_builder_volume }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,8 +39,6 @@ jobs:
           echo -e "\n---- branchs ----\n"
 
           echo "branchs=$JSON" >> $GITHUB_OUTPUT
-
-          echo "openwrt_builder_volume=${{ vars.OPENWRT_BUILDER_VOLUME }}" >> "$GITHUB_OUTPUT"
 
           python3 -B ./.github/workflows/scripts/get_targets.py | while read v;do echo "$v" >> "$GITHUB_OUTPUT"; done
 
@@ -92,7 +89,7 @@ jobs:
       image: openwrt/sdk:x86-64-${{ matrix.branch }}
       volumes:
         - openwrt-sdk-x86-64-${{ matrix.branch }}:/builder
-        - ${{ needs.setup.outputs.openwrt_builder_volume }}/:/data/
+        - openwrt-share:/data/
       options: --user root --privileged --pull always
     steps:
       - name: Set env
