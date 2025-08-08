@@ -8,6 +8,9 @@
                 "CONFIG_ISO_IMAGES=y"
             ],
             "user_packages": [
+                "coreutils-rm",
+                "coreutils-cp",
+                "coreutils-mv",
                 "{{ simple | join(' ') }}",
                 "{{ common | join(' ') }}",
                 "{{ docker | join(' ') }}",
