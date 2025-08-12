@@ -35,7 +35,7 @@ define Package/traefik
   CATEGORY:=Network
   TITLE:=Traefik web server
   URL:=https://github.com/traefik/traefik
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+  DEPENDS:=@(TARGET_x86_64||TARGET_armsr_armv8||TARGET_sunxi) +ca-bundle
 endef
 
 define Package/traefik/conffiles
