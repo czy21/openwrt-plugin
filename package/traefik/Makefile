@@ -6,15 +6,15 @@ PKG_NAME:=traefik
 PKG_VERSION:=3.4.1
 PKG_RELEASE:=1
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/traefik/traefik/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=a15979c1593ba2d09e4210d698f6fc82bb1cbe9f856180ba7671d6d2b45cf5ba
+PKG_SOURCE:=$(PKG_NAME)-v$(PKG_VERSION).src.tar.gz
+PKG_SOURCE_URL:=https://github.com/traefik/traefik/releases/download/v$(PKG_VERSION)/
+PKG_HASH:=8d971571725057b2e8bdcc2441f9612f75fa3780cff62cfd52fbe3872786ca29
 
 PKG_LICENSE=MIT
 PKG_LICENSE_FILES:=LICENSE.md
 PKG_MAINTAINER:=Bruce Chen <a805899926@gmail.com>
 
-PKG_BUILD_DEPENDS:=golang/host node/host node-yarn/host
+PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_BUILD_FLAGS:=no-mips16
 
@@ -29,6 +29,8 @@ GO_PKG_LDFLAGS_X:=$(GO_PKG)/pkg/version.Version=$(PKG_VERSION) \
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
+
+TAR_CMD=$(HOST_TAR) -C $(1) $(TAR_OPTIONS)
 
 define Package/traefik
   SECTION:=net
@@ -46,19 +48,14 @@ define Package/traefik/description
   Traefik is a modern HTTP reverse proxy and load balancer made to deploy microservices with ease.
 endef
 
-define Build/Compile
-	( \
-		pushd $(PKG_BUILD_DIR) ; \
-		yarn --cwd $(PKG_BUILD_DIR)/webui install ; \
-		yarn --cwd $(PKG_BUILD_DIR)/webui build ; \
-		popd ; \
-		$(call GoPackage/Build/Compile) ; \
-	)
-endef
-
 define Package/traefik/install
-	$(call GoPackage/Package/Install/Bin,$(1))
+	$(INSTALL_DIR) $(1)/usr/bin/
+	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/traefik $(1)/usr/bin/
 	$(INSTALL_DIR) $(1)/etc/traefik
+	$(INSTALL_DIR) $(1)/etc/traefik/conf.d
+	$(INSTALL_CONF) ./files/traefik.yml $(1)/etc/traefik/traefik.yml
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/traefik.init $(1)/etc/init.d/traefik
 endef
 
 $(eval $(call GoBinPackage,traefik))
