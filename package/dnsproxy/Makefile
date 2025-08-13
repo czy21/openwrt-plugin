@@ -42,14 +42,9 @@ define Package/dnsproxy/description
   work as a DNS-over-HTTPS, DNS-over-TLS or DNS-over-QUIC server.
 endef
 
-
-
-
 define Package/dnsproxy/install 
 	$(call GoPackage/Package/Install/Bin,$(1)) 
-
 	$(INSTALL_DIR) $(1)/etc/dnsproxy 
-
 	$(INSTALL_DIR) $(1)/etc/init.d 
 	$(INSTALL_BIN) ./files/dnsproxy.init $(1)/etc/init.d/dnsproxy 
 
