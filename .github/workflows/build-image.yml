@@ -15,7 +15,6 @@ jobs:
       targets: ${{ steps.set_env.outputs.targets }}
       targets_subtargets: ${{ steps.set_env.outputs.targets_subtargets }}
       targets_devices: ${{ steps.set_env.outputs.targets_devices }}
-      archs: ${{ steps.set_env.outputs.archs }}
       openwrt_tag: ${{ steps.set_env.outputs.openwrt_tag }}
       openwrt_tag_version: ${{ steps.set_env.outputs.openwrt_tag_version }}
       openwrt_branch: ${{ steps.set_env.outputs.openwrt_branch }}
@@ -61,7 +60,6 @@ jobs:
     runs-on: self-hosted
     strategy:
        fail-fast: false
-       max-parallel: 3
        matrix:
          include: ${{fromJson(needs.setup.outputs.targets_subtargets)}}
     container:
