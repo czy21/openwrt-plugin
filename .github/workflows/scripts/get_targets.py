@@ -1,19 +1,19 @@
-import io
 import json
 import pathlib
-import argparse
-import yaml
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--openwrt-master', action="store_true")
-args: argparse.Namespace = parser.parse_args()
 
 targets = []
 subtargets = []
 archs = []
 
+packages_path = pathlib.Path(__file__).joinpath("../../../../packages.json")
+if packages_path.exists():
+    packages_objs = json.loads(packages_path.read_text())
+    archs.extend([p['name'] for p in packages_objs])
+
+archs = list(set(archs))
+
 config_path = pathlib.Path(__file__).joinpath("../../../../config").resolve()
-global_profiles=config_path.joinpath("profiles.json")
+global_profiles = config_path.joinpath("profiles.json")
 for p in config_path.rglob("**/*profiles.json"):
     if p == global_profiles:
         continue
@@ -23,13 +23,7 @@ for p in config_path.rglob("**/*profiles.json"):
     target = profile_target.split("/")[0]
     subtarget = profile_target.split("/")[1]
     targets.append(target)
-    subtargets.append({"target":target,"subtarget": subtarget})
-
-    arch_packages = profile_obj.get("arch_packages")
-    if arch_packages:
-        archs.append(arch_packages)
-
-archs = list(set(archs))
+    subtargets.append({"target": target, "subtarget": subtarget})
 
 print("targets={0}".format(json.dumps(targets)))
 print("targets_subtargets={0}".format(json.dumps(subtargets)))
