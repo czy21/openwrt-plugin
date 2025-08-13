@@ -1,0 +1,21 @@
+providers:
+  file:
+    directory: /etc/traefik/conf.d/
+    watch: true
+
+log:
+  level: ERROR
+  filePath: /var/log/traefik/traefik.log
+  maxAge: 3
+  maxSize: 5
+
+accessLog:
+  filePath: /var/log/traefik/traefik.log
+
+api:
+  dashboard: true
+  insecure: true
+
+entryPoints:
+  traefik:
+    address: :8000
