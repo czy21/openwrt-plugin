@@ -5,7 +5,7 @@ targets = []
 subtargets = []
 archs = []
 
-packages_path = pathlib.Path(__file__).joinpath("../../../../packages.json")
+packages_path = pathlib.Path(__file__).joinpath("../../../../packages.json").resolve()
 if packages_path.exists():
     packages_objs = json.loads(packages_path.read_text())
     archs.extend([p['name'] for p in packages_objs if p['type'] == 'directory'])
