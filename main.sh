@@ -24,12 +24,12 @@ function cp_pkg_var(){
   if [ -f "$target_makefile" ];then
     for k in $keys;do
       v=$(sed -n "s|^$k:=\(.*\)|\1|p" $source_makefile)
-      grep "^$k:=" -q $source_makefile && sed -i "s|^$k:=.*|$k:=$v|" $target_makefile || echo "$source_makefile not found $k"
 
-      if [[ "$k" == "FRONTEND_HASH" ]] && ! grep -q "^$k:=" "$source_makefile"; then
+      if [[ -z "$v" ]] && [[ "$k" == "FRONTEND_HASH" ]]; then
         v=$(sed -n "s|^[[:space:]]*HASH:=\(.*\)|\1|p" $source_makefile)
-        sed -i "s|^$k:=.*|$k:=$v|" $target_makefile
       fi
+
+      sed -i "s|^$k:=.*|$k:=$v|" $target_makefile
     done  
   else
     echo "$target_makefile not found"
