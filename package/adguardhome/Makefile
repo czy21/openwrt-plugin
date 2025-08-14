@@ -6,37 +6,36 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=adguardhome
-PKG_VERSION:=0.107.63
-PKG_RELEASE:=1
+PKG_VERSION:=0.107.64
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/AdguardTeam/AdGuardHome/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=f445eb98fc1beba326433da7c999799fe36c7f15297fdebe59a41914eaffe3ad
+PKG_HASH:=a6b61d3c102fa47072a7230382d438f3d408f74ffae3aff7d330adad90ed169c
 PKG_BUILD_DIR:=$(BUILD_DIR)/AdGuardHome-$(PKG_VERSION)
 
 FRONTEND_DEST:=$(PKG_NAME)-frontend-$(PKG_VERSION).tar.gz
 FRONTEND_URL:=https://github.com/AdguardTeam/AdGuardHome/releases/download/v$(PKG_VERSION)/
-FRONTEND_HASH:=74bda6f7c7334342b33fff50a0cdff4e206f84a471bab983ee16d3f6f112c53a
+FRONTEND_HASH:=f0c1e4d6e673d4d26d52947cdb220682aa554158d331fa044576d1794b82e325
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE.txt
 PKG_CPE_ID:=cpe:/a:adguard:adguardhome
-PKG_MAINTAINER:=Dobroslaw Kijowski <dobo90@gmail.com>
+PKG_MAINTAINER:=Dobroslaw Kijowski <dobo90@gmail.com>, George Sapkin <george@sapk.in>
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/AdguardTeam/AdGuardHome
-GO_PKG_BUILD_PKG:=$(GO_PKG)
+GO_PKG_BUILD_PKG:=github.com/AdguardTeam/AdGuardHome
 
-AGH_BUILD_TIME:=$(shell date -d @$(SOURCE_DATE_EPOCH) +%FT%TZ%z)
-GO_PKG_LDFLAGS_X:= \
-	$(GO_PKG)/internal/version.channel=release \
-	$(GO_PKG)/internal/version.version=v$(PKG_VERSION) \
-	$(GO_PKG)/internal/version.buildtime=$(AGH_BUILD_TIME) \
-	$(GO_PKG)/internal/version.goarm=$(GO_ARM) \
-	$(GO_PKG)/internal/version.gomips=$(GO_MIPS)
+AGH_VERSION_PKG:=github.com/AdguardTeam/AdGuardHome/internal/version
+GO_PKG_LDFLAGS_X:=$(AGH_VERSION_PKG).channel=release \
+	$(AGH_VERSION_PKG).version=$(PKG_VERSION) \
+	$(AGH_VERSION_PKG).committime=$(SOURCE_DATE_EPOCH) \
+	$(AGH_VERSION_PKG).goarm=$(GO_ARM) \
+	$(AGH_VERSION_PKG).gomips=$(GO_MIPS)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
