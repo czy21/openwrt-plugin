@@ -106,7 +106,7 @@ jobs:
 
       - name: Move created packages to project dir
         run: |
-          ls -alR bin/packages
+          ls -alR bin/packages || true
           
           artifact_dir=bin/artifact/${{ matrix.arch }}/plugin
           mkdir -p ${artifact_dir}
@@ -116,12 +116,14 @@ jobs:
       - name: Store packages
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: ${{ matrix.arch }}-packages
           path: bin/artifact/
 
       - name: Store logs
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1
           name: ${{ matrix.arch }}-logs
           path: "logs/"
 
