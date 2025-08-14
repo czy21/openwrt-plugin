@@ -23,13 +23,14 @@ function cp_pkg_var(){
   
   if [ -f "$target_makefile" ];then
     for k in $keys;do
-      v=$(sed -n "s|^$k:=.*|\0|p" $source_makefile)
-      sed -i "s|^$k:=.*|$v|" $target_makefile
-    done
-    if [ "${pkg_name}" == "adguardhome" ];then
-      frontend_hash=$(sed -n "s|^[[:space:]]*HASH:=\(.*\)|\0|p" $source_makefile)
-      sed -i "s|^[[:space:]]*HASH:=.*|$frontend_hash|" $target_makefile
-    fi
+      v=$(sed -n "s|^$k:=\(.*\)|\1|p" $source_makefile)
+      grep "^$k:=" -q $source_makefile && sed -i "s|^$k:=.*|$k:=$v|" $target_makefile || echo "$source_makefile not found $k"
+
+      if [[ "$k" == "FRONTEND_HASH" ]] && ! grep -q "^$k:=" "$source_makefile"; then
+        v=$(sed -n "s|^[[:space:]]*HASH:=\(.*\)|\1|p" $source_makefile)
+        sed -i "s|^$k:=.*|$k:=$v|" $target_makefile
+      fi
+    done  
   else
     echo "$target_makefile not found"
   fi
