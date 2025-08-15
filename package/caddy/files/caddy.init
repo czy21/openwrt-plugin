@@ -1,0 +1,23 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2023 Bruce Chen <a805899926@gmail.com>
+#
+
+START=99
+STOP=80
+
+USE_PROCD=1
+PROG=/usr/bin/caddy
+
+start_service() {
+
+    procd_open_instance
+    procd_set_param command "$PROG" run --config /etc/caddy/Caddyfile --adapter caddyfile --watch
+
+    procd_set_param respawn
+    procd_close_instance
+
+}
+
+service_triggers() {
+  procd_add_reload_trigger caddy
+}

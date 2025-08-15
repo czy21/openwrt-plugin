@@ -46,6 +46,10 @@ endef
 define Package/caddy/install
 	$(call GoPackage/Package/Install/Bin,$(1))
 	$(INSTALL_DIR) $(1)/etc/caddy
+	$(INSTALL_DIR) $(1)/etc/caddy/conf.d
+	$(INSTALL_CONF) ./files/Caddyfile $(1)/etc/caddy/Caddyfile
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/caddy.init $(1)/etc/init.d/caddy
 endef
 
 $(eval $(call GoBinPackage,caddy))
