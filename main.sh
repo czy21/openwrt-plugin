@@ -66,61 +66,53 @@ function sparse_checkout_lede(){
   sparse_checkout $lede_dir "https://github.com/coolsnowwolf/lede" "$lede_pkg"
   cp -rv $lede_dir/package/lean/ddns-scripts_aliyun/update_aliyun_com.sh package/net/ddns-scripts-aliyun/files/
 
-  
-  lede_luci_dir=feeds/coolsnowwolf/luci
-  lede_luci_pkg="applications/luci-app-socat applications/luci-app-nfs"
-  sparse_checkout $lede_luci_dir "https://github.com/coolsnowwolf/luci" "$lede_luci_pkg"
+  source_luci_dir=feeds/coolsnowwolf/luci
+  source_luci_pkg="applications/luci-app-socat applications/luci-app-nfs"
+  sparse_checkout $source_luci_dir "https://github.com/coolsnowwolf/luci" "$source_luci_pkg"
 
-  for t in $lede_luci_pkg;do
+  for t in $source_luci_pkg;do
     rm -rf luci/$(basename $t)
-    cp -rv $lede_luci_dir/$t luci/
+    cp -rv $source_luci_dir/$t luci/
   done
 
 }
 
 function sparse_checkout_immortalwrt(){
 
-  immortalwrt_packages_dir=feeds/immortalwrt/packages
-  immortalwrt_packages_pkg="net/adguardhome"
-  sparse_checkout $immortalwrt_packages_dir "https://github.com/immortalwrt/packages" "$immortalwrt_packages_pkg" $([ "$branch" == "main" ] && echo master || echo $branch)
+  source_packages_dir=feeds/immortalwrt/packages
+  source_packages_pkg="net/adguardhome"
+  sparse_checkout $source_packages_dir "https://github.com/immortalwrt/packages" "$source_packages_pkg" $([ "$branch" == "main" ] && echo master || echo $branch)
 
-  for t in $immortalwrt_packages_pkg;do
-    cp_pkg_var $immortalwrt_packages_dir/$t/Makefile package/$t/Makefile
+  for t in $source_packages_pkg;do
+    cp_pkg_var $source_packages_dir/$t/Makefile package/$t/Makefile
   done
   
 }
 
 function sparse_checkout_official(){
 
-  official_packages_dir=feeds/openwrt/packages
-  official_packages_pkg="net/dnsproxy"
-  sparse_checkout $official_packages_dir "https://github.com/openwrt/packages" "$official_packages_pkg" $([ "$branch" == "main" ] && echo master || echo $branch)
+  source_packages_dir=feeds/openwrt/packages
+  source_packages_pkg="net/dnsproxy"
+  sparse_checkout $source_packages_dir "https://github.com/openwrt/packages" "$source_packages_pkg" $([ "$branch" == "main" ] && echo master || echo $branch)
 
-  for t in $official_packages_pkg;do
-    cp_pkg_var $official_packages_dir/$t/Makefile package/$t/Makefile
+  for t in $source_packages_pkg;do
+    cp_pkg_var $source_packages_dir/$t/Makefile package/$t/Makefile
   done
 
 }
 
-################################################
 if [ "$1" == "update" ];then
 
   sparse_checkout_lede
   sparse_checkout_immortalwrt
   sparse_checkout_official
 
-  find -name 'Makefile' -type f -exec sed -i "s|include ../../luci.mk|include $\(TOPDIR\)/feeds/luci/luci.mk|g" {} \;
+  find -name 'Makefile' -type f -not -path './feeds/*' -exec sed -i "s|include ../../luci.mk|include $\(TOPDIR\)/feeds/luci/luci.mk|g" {} \;
 
-  find -name 'Makefile' -type f -exec sed -i "s|include ../../packages/|include $\(TOPDIR\)/feeds/packages/|g" {} \;
+  find -name 'Makefile' -type f -not -path './feeds/*' -exec sed -i "s|include ../../packages/|include $\(TOPDIR\)/feeds/packages/|g" {} \;
 
-  for i in $(find -name 'zh-cn' -type d); do
-    zh_Hans_dir=$(dirname $i)/zh_Hans
-    mkdir -p ${zh_Hans_dir}
-    cp -rv $i/* ${zh_Hans_dir}
-    rm -rf $i
+  for s in $(find -name 'zh-cn' -type d -not -path './feeds/*'); do
+    t=$(dirname $s)/zh_Hans
+    mv -v $s $t
   done
-fi
-
-if [ "$1" == "check" ];then
-  echo "check"
 fi
