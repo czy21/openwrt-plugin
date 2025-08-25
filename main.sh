@@ -1,21 +1,27 @@
 #!/bin/bash
 
+shopt -s expand_aliases
+
+if [ -n "$(type -p gfind)" ];then
+  alias find='gfind'
+fi
+
+if [ -n "$(type -p gsed)" ];then
+  alias sed='gsed'
+fi
+
+type find
+type sed
+
 cd $(cd "$(dirname "$0")"; pwd)
 
 branch=$(git branch --show-current)
-
-function cp_pkg(){
-  pkg_path=$1
-  pkg_name=`basename $1`
-  cp -rv package/${pkg_name}/files/ ../packages/${pkg_path}
-  [ -f "package/${pkg_name}/Makefile.override" ] && cp -rv package/${pkg_name}/Makefile.override ../packages/${pkg_path}/Makefile    
-}
 
 function cp_pkg_var(){
   keys="PKG_VERSION PKG_RELEASE PKG_HASH PKG_MIRROR_HASH"
   pkg_name=$(basename $(dirname $1))
   source_makefile=$1
-  target_makefile=package/${pkg_name}/Makefile
+  target_makefile=$2
 
   if [ "${pkg_name}" == "adguardhome" ];then
     keys+=" FRONTEND_HASH"
@@ -58,7 +64,7 @@ function sparse_checkout_lede(){
   lede_dir=feeds/coolsnowwolf/lede
   lede_pkg="package/lean/ddns-scripts_aliyun/update_aliyun_com.sh"
   sparse_checkout $lede_dir "https://github.com/coolsnowwolf/lede" "$lede_pkg"
-  cp -rv $lede_dir/package/lean/ddns-scripts_aliyun/update_aliyun_com.sh package/ddns-scripts-aliyun/files/
+  cp -rv $lede_dir/package/lean/ddns-scripts_aliyun/update_aliyun_com.sh package/net/ddns-scripts-aliyun/files/
 
   
   lede_luci_dir=feeds/coolsnowwolf/luci
@@ -79,7 +85,7 @@ function sparse_checkout_immortalwrt(){
   sparse_checkout $immortalwrt_packages_dir "https://github.com/immortalwrt/packages" "$immortalwrt_packages_pkg" $([ "$branch" == "main" ] && echo master || echo $branch)
 
   for t in $immortalwrt_packages_pkg;do
-    cp_pkg_var $immortalwrt_packages_dir/$t/Makefile
+    cp_pkg_var $immortalwrt_packages_dir/$t/Makefile package/$t/Makefile
   done
   
 }
@@ -91,7 +97,7 @@ function sparse_checkout_official(){
   sparse_checkout $official_packages_dir "https://github.com/openwrt/packages" "$official_packages_pkg" $([ "$branch" == "main" ] && echo master || echo $branch)
 
   for t in $official_packages_pkg;do
-    cp_pkg_var $official_packages_dir/$t/Makefile
+    cp_pkg_var $official_packages_dir/$t/Makefile package/$t/Makefile
   done
 
 }
