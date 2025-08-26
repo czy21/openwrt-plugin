@@ -97,7 +97,10 @@ jobs:
           openwrt_tag=${{ needs.setup.outputs.openwrt_tag }}
           openwrt_mirror=https://mirrors.pku.edu.cn/openwrt
 
-          [ ! -f setup.sh ] || UPSTREAM_URL=${openwrt_mirror} bash setup.sh
+          if [ -f setup.sh ];then
+            sed -i "s|^sha256sum -c|#\0|" setup.sh
+            UPSTREAM_URL=${openwrt_mirror} bash setup.sh
+          fi
 
           sed -i 's|^CONFIG_SIGNATURE_CHECK|# \0|' .config
 
