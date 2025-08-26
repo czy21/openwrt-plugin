@@ -153,7 +153,10 @@ jobs:
           mkdir -p ${{ steps.set_env.outputs.download_packages_dir }}
           
           openwrt_mirror=https://mirrors.pku.edu.cn/openwrt
-          [ ! -f setup.sh ] || UPSTREAM_URL=${openwrt_mirror} bash setup.sh
+          if [ -f setup.sh ];then
+            sed -i "s|^sha256sum -c|#\0|" setup.sh
+            UPSTREAM_URL=${openwrt_mirror} bash setup.sh
+          fi
           make defconfig
 
       - name: Download artifact
