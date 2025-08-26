@@ -3,7 +3,6 @@ name: Sync
 on:
   push:
     paths:
-      - '.github/workflows/scripts/**'
       - '.github/workflows/build-*'
       - main.sh
   workflow_dispatch:
@@ -17,10 +16,15 @@ jobs:
       branchs: ${{ steps.set_env.outputs.branchs }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: czy21/share
+          path: feeds/share
       - name: Set env
         id: set_env
         run: |
+          mv feeds/share/.github/workflows/scripts .github/workflows/
           branchs=main
           branchs+=$(echo;git ls-remote origin | sed -n 's|.*\(openwrt-*\)|\1|p' | xargs)
 
@@ -42,7 +46,7 @@ jobs:
 
           wget https://mirrors.pku.edu.cn/files/openwrt/snapshots/packages/ -O packages.json
 
-          python3 -B ./.github/workflows/scripts/get_targets.py | while read v;do echo "$v" >> "$GITHUB_OUTPUT"; done
+          python3 -B .github/workflows/scripts/openwrt-get_targets.py | while read v;do echo "$v" >> "$GITHUB_OUTPUT"; done
 
   plugin:
     name: Plugin
@@ -65,7 +69,8 @@ jobs:
           git clone ${{ github.server_url }}/${{ github.repository }} feeds/main
 
           mkdir -p .github/workflows/
-          cp -rfv feeds/main/.github/workflows/scripts/ feeds/main/.github/workflows/build-* .github/workflows/
+          rm -rfv .github/workflows/scripts
+          cp -rfv feeds/main/.github/workflows/build-* .github/workflows/
           cp -rfv feeds/main/main.sh .
 
       - name: Determine update
@@ -90,7 +95,7 @@ jobs:
     container:
       image: openwrt/sdk:x86-64-${{ matrix.branch }}
       volumes:
-        - openwrt-sdk-x86-64-${{ matrix.branch }}:/builder
+        - openwrt-sdk-x86-64-${{ matrix.branch }}-${{ github.run_id }}:/builder
         - openwrt-share:/data/
       options: --user root --privileged --pull always
     steps:
@@ -191,7 +196,7 @@ jobs:
     if: always()
     steps:
       - run: |
-          volume_names=$(docker volume ls -q | grep 'openwrt-sdk-x86-64-${{ matrix.branch }}$' || true | xargs )
+          volume_names=$(docker volume ls -q | grep 'openwrt-sdk-x86-64-${{ matrix.branch }}-${{ github.run_id }}$' || true | xargs )
           if [ -n "${volume_names}" ];then
             docker volume rm $volume_names
           fi
