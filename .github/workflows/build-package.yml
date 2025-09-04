@@ -18,4 +18,4 @@ jobs:
     uses: czy21/share/.github/workflows/openwrt-build-package.yml@main
     with: 
       packages: ${{ inputs.packages }}
-      debug: ${{ inputs.debug }}
+      debug: ${{ inputs.debug || false }}
