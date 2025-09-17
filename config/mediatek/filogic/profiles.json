@@ -16,6 +16,13 @@
         "kmod-mac80211",
         "luci-app-openclash"
       ]
+    },
+    "xiaomi_mi-router-ax3000t": {
+      "user_configs": [],
+      "user_packages": [
+        "{{ simple | join(' ') }}",
+        "kmod-mac80211"
+      ]
     }
   },
   "target": "mediatek/filogic"
