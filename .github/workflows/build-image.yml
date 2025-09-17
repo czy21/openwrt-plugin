@@ -11,7 +11,7 @@ on:
         description: "eg: v23.05.5"
       targets:
         type: string
-        description: "special targets example: x86/64 rockchip/armv8"
+        description: "eg: x86/64 rockchip/armv8"
 
 jobs:
   build:
