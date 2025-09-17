@@ -8,10 +8,10 @@ on:
     inputs:
       openwrt_tag:
         type: string
-        description: "eg: v23.05.5"
+        description: "tag: v23.05.5"
       targets:
         type: string
-        description: "eg: x86/64 rockchip/armv8"
+        description: "targets: x86/64 rockchip/armv8"
 
 jobs:
   build:

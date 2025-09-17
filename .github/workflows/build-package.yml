@@ -9,7 +9,7 @@ on:
     inputs:
       packages:
         type: string
-        description: "eg: adguardhome dnsproxy"
+        description: "packages: adguardhome dnsproxy"
       debug:
         type: boolean
         default: false
