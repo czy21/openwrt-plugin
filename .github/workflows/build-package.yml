@@ -9,7 +9,7 @@ on:
     inputs:
       packages:
         type: string
-        description: "empty only build changed or input special package names or input all will build all"
+        description: "special packages example: adguardhome dnsproxy"
       debug:
         type: boolean
         default: false

@@ -1,16 +1,23 @@
 name: Build images
 
 on:
+  push:
+    paths:
+      - config/**/profiles.json
   workflow_dispatch:
     inputs:
       openwrt_tag:
         type: string
         description: "eg: v23.05.5"
+      targets:
+        type: string
+        description: "special targets example: x86/64 rockchip/armv8"
 
 jobs:
   build:
     uses: czy21/share/.github/workflows/openwrt-build-image.yml@main
     with: 
       openwrt_tag: ${{ inputs.openwrt_tag }}
+      targets: ${{ inputs.targets }}
 
     
