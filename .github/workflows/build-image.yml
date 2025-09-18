@@ -6,9 +6,9 @@ on:
       - config/**/profiles.json
   workflow_dispatch:
     inputs:
-      openwrt_tag:
+      version:
         type: string
-        description: "tag: v23.05.5"
+        description: "version: 24.10.2"
       targets:
         type: string
         description: "targets: x86/64 rockchip/armv8"
@@ -17,7 +17,7 @@ jobs:
   build:
     uses: czy21/share/.github/workflows/openwrt-build-image.yml@main
     with: 
-      openwrt_tag: ${{ inputs.openwrt_tag }}
+      version: ${{ inputs.version }}
       targets: ${{ inputs.targets }}
 
     
