@@ -8,7 +8,7 @@ on:
     inputs:
       version:
         type: string
-        description: "version: v23.05.5"
+        description: "version: 24.10.2"
       targets:
         type: string
         description: "targets: x86/64 rockchip/armv8"
