@@ -148,7 +148,11 @@ jobs:
           echo 'immortalwrt-org' > rsync-immortalwrt-password
           chmod 600 rsync-immortalwrt-password
           archs="${{ join(fromJson(needs.setup.outputs.archs),' ') }}"
-          packages="*vlmcsd* luci-app-openclash*"
+          
+          packages=
+          packages+="*vlmcsd* "
+          packages+="luci-app-openclash* "
+          packages+="*passwall* *chinadns-ng* *dns2socks* *tcping* *ipt2socks* *shadowsocks-rust-sslocal* *shadowsocks-rust-ssserver* *simple-obfs-client* *geoview* *v2ray-plugin* "
 
           echo -n "" > include-archs-packages
           for a in $archs;do
