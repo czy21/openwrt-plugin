@@ -24,6 +24,6 @@ jobs:
   build:
     uses: czy21/share/.github/workflows/openwrt-build-package.yml@main
     with: 
-      mirror: ${{ inputs.mirror }}
+      mirror: ${{ inputs.mirror || 'https://mirrors.pku.edu.cn/openwrt' }}
       packages: ${{ inputs.packages }}
       debug: ${{ inputs.debug || false }}
