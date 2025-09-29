@@ -8,9 +8,12 @@ on:
   workflow_dispatch:
     inputs:
       mirror: 
-        type: string
+        type: choice
         required: true
         default: https://mirrors.pku.edu.cn/openwrt
+        options: 
+          - https://mirrors.pku.edu.cn/openwrt
+          - https://mirrors.hit.edu.cn/openwrt
       packages:
         type: string
         description: "packages: adguardhome dnsproxy"
