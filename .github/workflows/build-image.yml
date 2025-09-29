@@ -6,6 +6,10 @@ on:
       - config/**/profiles.json
   workflow_dispatch:
     inputs:
+      mirror: 
+        type: string
+        required: true
+        default: https://mirrors.pku.edu.cn/openwrt
       version:
         type: string
         description: "version: 24.10.2"
@@ -17,6 +21,7 @@ jobs:
   build:
     uses: czy21/share/.github/workflows/openwrt-build-image.yml@main
     with: 
+      mirror: ${{ inputs.mirror }}
       version: ${{ inputs.version }}
       targets: ${{ inputs.targets }}
 

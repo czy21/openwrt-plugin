@@ -7,6 +7,10 @@ on:
       - package/**
   workflow_dispatch:
     inputs:
+      mirror: 
+        type: string
+        required: true
+        default: https://mirrors.pku.edu.cn/openwrt
       packages:
         type: string
         description: "packages: adguardhome dnsproxy"
@@ -17,5 +21,6 @@ jobs:
   build:
     uses: czy21/share/.github/workflows/openwrt-build-package.yml@main
     with: 
+      mirror: ${{ inputs.mirror }}
       packages: ${{ inputs.packages }}
       debug: ${{ inputs.debug || false }}
