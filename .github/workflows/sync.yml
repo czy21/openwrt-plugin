@@ -6,6 +6,14 @@ on:
       - '.github/workflows/build-*'
       - main.sh
   workflow_dispatch:
+    inputs:
+      mirror: 
+        type: choice
+        required: true
+        default: https://mirrors.pku.edu.cn/openwrt
+        options: 
+          - https://mirrors.pku.edu.cn/openwrt
+          - https://mirrors.hit.edu.cn/openwrt
 
 jobs:
   setup:
@@ -131,10 +139,9 @@ jobs:
         working-directory: /builder
         shell: su buildbot -c "bash {0}"
         run: |
-          openwrt_mirror=https://mirrors.pku.edu.cn/openwrt
           if [ -f setup.sh ];then
             sed -i "s|^sha256sum -c|#\0|" setup.sh
-            UPSTREAM_URL=${openwrt_mirror} bash setup.sh
+            UPSTREAM_URL=${{ inputs.mirror }} bash setup.sh
           fi
           make defconfig
           
@@ -152,7 +159,6 @@ jobs:
           packages=
           packages+="*vlmcsd* "
           packages+="luci-app-openclash* "
-          packages+="*passwall* *chinadns-ng* *dns2socks* *tcping* *ipt2socks* *shadowsocks-rust-sslocal* *shadowsocks-rust-ssserver* *simple-obfs-client* *geoview* *v2ray-plugin* "
 
           echo -n "" > include-archs-packages
           for a in $archs;do
@@ -184,7 +190,8 @@ jobs:
         run: |
           ln -snf /data/pri.key key-build
           sed -i -e 's|--sign $(BUILD_KEY_APK_SEC)|--allow-untrusted|' package/Makefile
-          for t in $(find ${{ steps.set_env.outputs.download_packages_dir }} -type d -name 'plugin');do
+          
+          for t in $(find ${{ steps.set_env.outputs.download_packages_dir }} -type d -mindepth 2 -maxdepth 2);do
             echo "Generating index for package ${t}"
             make -j4 package/index V=s PACKAGE_SUBDIRS=$t
           done
