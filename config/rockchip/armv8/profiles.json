@@ -7,8 +7,7 @@
             ],
             "user_packages": [
                 "{{ simple | join(' ') }}",
-                "{{ common | join(' ') }}",
-                "luci-app-openclash"
+                "{{ common | join(' ') }}"
             ]
         },
         "friendlyarm_nanopi-r4s": {
@@ -18,8 +17,7 @@
             "user_packages": [
                 "{{ simple | join(' ') }}",
                 "{{ common | join(' ') }}",
-                "{{ docker | join(' ') }}",
-                "luci-app-openclash"
+                "{{ docker | join(' ') }}"
             ]
         },
         "friendlyarm_nanopi-r5s": {
@@ -29,8 +27,7 @@
             "user_packages": [
                 "{{ simple | join(' ') }}",
                 "{{ common | join(' ') }}",
-                "{{ docker | join(' ') }}",
-                "luci-app-openclash"
+                "{{ docker | join(' ') }}"
             ]
         }
     },

@@ -2,9 +2,6 @@
   "arch_packages": "mipsel_24kc",
   "profiles": {
     "d-team_newifi-d2": {
-      "user_configs": [
-        "CONFIG_LUCI_LANG_zh_Hans=y"
-      ],
       "user_packages": [
         "-dnsmasq",
         "bash",
@@ -28,8 +25,7 @@
         "luci-app-nlbwmon",
         "luci-app-wol",
         "luci-app-adguardhome",
-        "luci-app-upnp",
-        "luci-app-openclash"
+        "luci-app-upnp"
       ]
     }
   },

@@ -5,16 +5,14 @@
       "user_configs": [],
       "user_packages": [
         "{{ simple | join(' ') }}",
-        "kmod-mac80211",
-        "luci-app-openclash"
+        "kmod-mac80211"
       ]
     },
     "tplink_tl-xdr6088": {
       "user_configs": [],
       "user_packages": [
         "{{ simple | join(' ') }}",
-        "kmod-mac80211",
-        "luci-app-openclash"
+        "kmod-mac80211"
       ]
     },
     "xiaomi_mi-router-ax3000t": {

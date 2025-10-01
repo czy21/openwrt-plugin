@@ -7,8 +7,7 @@
             ],
             "user_packages": [
                 "{{ simple | join(' ') }}",
-                "{{ common | join(' ') }}",
-                "luci-app-openclash"
+                "{{ common | join(' ') }}"
             ]
         }
     },
