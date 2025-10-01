@@ -13,8 +13,7 @@
                 "coreutils-mv",
                 "{{ simple | join(' ') }}",
                 "{{ common | join(' ') }}",
-                "{{ docker | join(' ') }}",
-                "luci-app-openclash"
+                "{{ docker | join(' ') }}"
             ]
         }
     },
