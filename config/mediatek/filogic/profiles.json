@@ -6,22 +6,19 @@
         "CONFIG_LUCI_LANG_zh-cn=y"
       ],
       "user_packages": [
-        "{{ simple | join(' ') }}",
-        "kmod-mac80211"
+        "{{ simple_128M | join(' ') }}"
       ]
     },
     "tplink_tl-xdr6088": {
       "user_configs": [],
       "user_packages": [
-        "{{ simple | join(' ') }}",
-        "kmod-mac80211"
+        "{{ simple_128M | join(' ') }}"
       ]
     },
     "xiaomi_mi-router-ax3000t": {
       "user_configs": [],
       "user_packages": [
-        "{{ simple | join(' ') }}",
-        "kmod-mac80211"
+        "{{ simple_128M | join(' ') }}"
       ]
     }
   },
