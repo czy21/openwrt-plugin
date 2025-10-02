@@ -52,7 +52,7 @@ jobs:
 
           echo "branchs=$JSON" >> $GITHUB_OUTPUT
 
-          wget https://mirrors.pku.edu.cn/files/openwrt/snapshots/packages/ -O packages.json
+          wget https://mirrors.pku.edu.cn/files/openwrt/snapshots/packages/ -O .packages.json
 
           python3 -B .github/workflows/scripts/openwrt-get_targets.py | while read v;do echo "$v" >> "$GITHUB_OUTPUT"; done
 
@@ -139,9 +139,10 @@ jobs:
         working-directory: /builder
         shell: su buildbot -c "bash {0}"
         run: |
+          set -e
           if [ -f setup.sh ];then
             sed -i "s|^sha256sum -c|#\0|" setup.sh
-            UPSTREAM_URL=${{ inputs.mirror }} bash setup.sh
+            UPSTREAM_URL=${{ inputs.mirror || 'https://mirrors.hit.edu.cn/openwrt' }} bash setup.sh
           fi
           make defconfig
           
