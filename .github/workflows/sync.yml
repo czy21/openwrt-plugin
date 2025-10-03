@@ -138,12 +138,13 @@ jobs:
       - name: Setup
         working-directory: /builder
         shell: su buildbot -c "bash {0}"
+        env: 
+          UPSTREAM_URL: ${{ inputs.mirror || 'https://mirrors.hit.edu.cn/openwrt' }}
         run: |
           set -e
-          if [ -f setup.sh ];then
-            sed -i "s|^sha256sum -c|#\0|" setup.sh
-            UPSTREAM_URL=${{ inputs.mirror || 'https://mirrors.hit.edu.cn/openwrt' }} bash setup.sh
-          fi
+
+          [ ! -d ./scripts ] && sed -i "s|^sha256sum -c|# \0|" setup.sh && ./setup.sh
+          
           make defconfig
           
           mkdir -p ${{ steps.set_env.outputs.artifact_dir }}
@@ -189,14 +190,19 @@ jobs:
         working-directory: /builder
         shell: su buildbot -c "bash {0}"
         run: |
-          ln -snf /data/pri.key key-build
-          sed -i -e 's|--sign $(BUILD_KEY_APK_SEC)|--allow-untrusted|' package/Makefile
-          
-          for t in $(find ${{ steps.set_env.outputs.download_packages_dir }} -type d -mindepth 2 -maxdepth 2);do
-            echo "Generating index for package ${t}"
-            make -j4 package/index V=s PACKAGE_SUBDIRS=$t
-          done
+          if grep -q '^CONFIG_USE_APK=y' .config;then
+            sed -i -e 's|--sign $(BUILD_KEY_APK_SEC)|\0 --allow-untrusted|' package/Makefile
+            ln -snf /data/apk.key private-key.pem
+          else
+            ln -snf /data/pri.key key-build
+          fi
 
+          find ${{ steps.set_env.outputs.download_packages_dir }} -type d -mindepth 2 -maxdepth 2 -exec sh -c 'f={};echo "Generating index for package $f";make -j4 package/index PACKAGE_SUBDIRS=$f V=s' \;
+
+          if grep -q '^CONFIG_USE_APK=y' .config;then
+            find ${{ steps.set_env.outputs.download_packages_dir }} -name 'packages.adb' -exec /builder/staging_dir/host/bin/apk adbsign --allow-untrusted --reset-signatures --sign-key /data/apk.key {} \;
+          fi
+          
   clean:
     name: Clean
     runs-on: self-hosted
@@ -207,8 +213,4 @@ jobs:
         branch: ${{fromJson(needs.setup.outputs.branchs)}}
     if: always()
     steps:
-      - run: |
-          volume_names=$(docker volume ls -q | grep 'openwrt-sdk-x86-64-${{ matrix.branch }}-${{ github.run_id }}$' || true | xargs )
-          if [ -n "${volume_names}" ];then
-            docker volume rm $volume_names
-          fi
+      - run: docker volume rm openwrt-sdk-x86-64-${{ matrix.branch }}-${{ github.run_id }} || true
