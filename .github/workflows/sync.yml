@@ -189,12 +189,16 @@ jobs:
         working-directory: /builder
         shell: su buildbot -c "bash {0}"
         run: |
-          ln -snf /data/pri.key key-build
-          sed -i -e 's|--sign $(BUILD_KEY_APK_SEC)|--allow-untrusted|' package/Makefile
-          
+          if grep -q '^CONFIG_USE_APK=y' .config;then
+            sed -i -e 's|--sign $(BUILD_KEY_APK_SEC)|\0 --allow-untrusted|' package/Makefile
+            ln -snf /data/pri.pem private-key.pem
+          else
+            ln -snf /data/pri.key key-build
+          fi
+
           for t in $(find ${{ steps.set_env.outputs.download_packages_dir }} -type d -mindepth 2 -maxdepth 2);do
             echo "Generating index for package ${t}"
-            make -j4 package/index V=s PACKAGE_SUBDIRS=$t
+            make -j4 package/index PACKAGE_SUBDIRS=$t V=s
           done
 
   clean:
