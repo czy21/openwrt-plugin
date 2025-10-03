@@ -18,7 +18,7 @@ cd $(cd "$(dirname "$0")"; pwd)
 branch=$(git branch --show-current)
 
 function cp_pkg_var(){
-  keys="PKG_VERSION PKG_RELEASE PKG_HASH PKG_MIRROR_HASH"
+  keys="PKG_VERSION PKG_HASH PKG_MIRROR_HASH"
   pkg_name=$(basename $(dirname $1))
   source_makefile=$1
   target_makefile=$2
