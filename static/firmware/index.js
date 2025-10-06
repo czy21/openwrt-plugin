@@ -120,7 +120,7 @@ function buildAsuRequest(request_hash) {
     diff_packages: false,
     client: "ofs/" + ofs_version,
     repositories: $("#repositories").value.includes("src/gz") ? Object.fromEntries($("#repositories").value.split('\n').filter(t => t.startsWith("src/gz")).map(t => [t.split(" ")[1], t.split(" ")[2]])) : {},
-    repository_keys: config.repository_keys || []
+    repository_keys: $("#repositories-keys").value.split('\n') || []
   });
   var method = "POST";
 
@@ -707,6 +707,11 @@ function changeModel(version, overview, title) {
   const entry = overview.profiles[title];
   const base_url = config.image_urls[version];
   if (entry) {
+    if (version === 'SNAPSHOT') {
+      hide('#request-build-link')
+    } else{
+      show('#request-build-link')
+    }
     fetch(`${base_url}/targets/${entry.target}/profiles.json`, {
       cache: "no-cache",
     })
@@ -731,25 +736,21 @@ function changeModel(version, overview, title) {
         };
       })
       .catch((err) => showAlert(err.message));
-    if (version === 'SNAPSHOT') {
-      $("#repositories").value = ""
-    } else {
-      fetch(`${base_url}/targets/${entry.target}/repositories.conf`, {
+      fetch(`${base_url}/targets/${entry.target}/repositories${version === 'SNAPSHOT'?'':".conf"}`, {
         cache: "no-cache",
       })
-        .then((obj) => {
-          if (obj.status != 200) {
-            throw new Error(`Failed to fetch ${obj.url}`);
-          }
-          hideAlert();
-          return obj.text();
-        })
-        .then((mobj) => {
-          $("#repositories").value = mobj
-        })
-        .catch((err) => showAlert(err.message));
-    }
-
+      .then((obj) => {
+        if (obj.status != 200) {
+          throw new Error(`Failed to fetch ${obj.url}`);
+        }
+        hideAlert();
+        return obj.text();
+      })
+      .then((mobj) => {
+        $("#repositories").value = mobj
+      })
+      .catch((err) => showAlert(err.message));
+      $("#repositories-keys").value = config.repository_keys.join("\n")
   } else {
     updateImages();
     current_device = {};
@@ -787,6 +788,23 @@ function setup_uci_defaults() {
   let link = icon.getAttribute("data-link");
   let textarea = $("#uci-defaults-content");
   icon.onclick = function () {
+    fetch(`${config.image_url}/${$("#models").value === 'SNAPSHOT'?'snapshots':'releases'}/setup.sh`)
+      .then((obj) => {
+        if (obj.status != 200) {
+          throw new Error(`Failed to fetch ${obj.url}`);
+        }
+        hideAlert();
+        return obj.text();
+      })
+      .then((text) => {
+        // toggle text
+        if (textarea.value.indexOf(text) != -1) {
+          textarea.value = textarea.value.replace(text, "");
+        } else {
+          textarea.value = textarea.value + text;
+        }
+      })
+      .catch((err) => showAlert(err.message));
     fetch(link)
       .then((obj) => {
         if (obj.status != 200) {

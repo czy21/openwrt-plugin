@@ -160,7 +160,17 @@
                     autocomplete="off"
                     spellcheck="false"
                     autocapitalize="off"
-                    disabled
+                    style="width:-webkit-fill-available"
+                  ></textarea>
+                </div>
+                <div>
+                  <h5>Repositories Keys</h5>
+                  <textarea
+                    rows="10"
+                    id="repositories-keys"
+                    autocomplete="off"
+                    spellcheck="false"
+                    autocapitalize="off"
                     style="width:-webkit-fill-available"
                   ></textarea>
                 </div>
@@ -210,10 +220,12 @@
                     data-link="uci-defaults/setup.sh"
                   ></span>
                 </div>
-                <a href="javascript:buildAsuRequest()" class="custom-link">
-                  <span></span
-                  ><span class="tr-request-build">REQUEST BUILD</span>
-                </a>
+                <div id="request-build-link" class="hide">
+                  <a href="javascript:buildAsuRequest()" class="custom-link">
+                    <span></span
+                    ><span class="tr-request-build">REQUEST BUILD</span>
+                  </a>
+                </div>
               </details>
             </div>
           </div>
