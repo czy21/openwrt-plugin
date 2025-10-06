@@ -787,8 +787,8 @@ function setup_uci_defaults() {
   let icon = $("#uci-defaults-template");
   let link = icon.getAttribute("data-link");
   let textarea = $("#uci-defaults-content");
-  icon.onclick = function () {
-    fetch(`${config.image_url}/${$("#models").value === 'SNAPSHOT'?'snapshots':'releases'}/setup.sh`)
+  icon.onclick = async function () {
+    await fetch(`${config.image_url}/${$("#versions").value === 'SNAPSHOT'?'snapshots':'releases'}/setup.sh`)
       .then((obj) => {
         if (obj.status != 200) {
           throw new Error(`Failed to fetch ${obj.url}`);
@@ -805,7 +805,7 @@ function setup_uci_defaults() {
         }
       })
       .catch((err) => showAlert(err.message));
-    fetch(link)
+    await fetch(link)
       .then((obj) => {
         if (obj.status != 200) {
           throw new Error(`Failed to fetch ${obj.url}`);
@@ -910,6 +910,7 @@ async function init() {
   console.log("versions: " + config.versions);
 
   setupSelectList($("#versions"), config.versions, (version) => {
+    $("#uci-defaults-content").value = ""
     // A new version was selected
     let overview_url = `${config.overview_urls[version]}/.overview.json`;
     fetch(overview_url, { cache: "no-cache" })
