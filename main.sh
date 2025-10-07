@@ -59,10 +59,15 @@ function sparse_checkout(){
 
 function sparse_checkout_main() {
   [ "$branch" = "main" ] && return
+  
   source_dir=feeds/czy21/openwrt-plugin
   source_packages=
+  source_packages+="package/net/acme-sync "
   source_packages+="package/net/adguardhome "
+  source_packages+="package/net/ddns-scripts-aliyun "
   source_packages+="package/net/dnsproxy "
+  source_packages+="package/net/openvpn-auth "
+
   source_checkout=
   source_checkout+=$source_packages
   sparse_checkout $source_dir "https://github.com/czy21/openwrt-plugin" "$source_checkout" $branch
@@ -72,12 +77,6 @@ function sparse_checkout_main() {
 }
 
 function sparse_checkout_lede() {
-
-  source_lede_dir=feeds/coolsnowwolf/lede
-  source_lede_checkout=
-  source_lede_checkout+="package/lean/ddns-scripts_aliyun/update_aliyun_com.sh"
-  sparse_checkout $source_lede_dir "https://github.com/coolsnowwolf/lede" "$source_lede_checkout"
-  cp -rv $source_lede_dir/package/lean/ddns-scripts_aliyun/update_aliyun_com.sh package/net/ddns-scripts-aliyun/files/
 
   source_luci_dir=feeds/coolsnowwolf/luci
   source_luci_pkg="applications/luci-app-socat applications/luci-app-nfs"
@@ -117,10 +116,23 @@ function sparse_checkout_official() {
   source_packages_dir=feeds/openwrt/packages
   source_packages_pkg=
   source_packages_pkg+="net/dnsproxy "
+
   if [ "$branch" = "main" ];then
     source_packages_pkg+="net/adguardhome "
   fi
+
+  source_checkout=
+  source_checkout+=$source_packages_pkg
+
+  if [ "$branch" = "main" ];then
+    source_checkout+="net/ddns-scripts/files/usr/lib/ddns/update_aliyun_com.sh "
+  fi
+
   sparse_checkout $source_packages_dir "https://github.com/openwrt/packages" "$source_packages_pkg" $([ "$branch" = "main" ] && echo master || echo $branch)
+
+  if [ "$branch" = "main" ];then
+    cp -rv $source_packages_dir/net/ddns-scripts/files/usr/lib/ddns/update_aliyun_com.sh package/net/ddns-scripts-aliyun/files/
+  fi
 
   for t in $source_packages_pkg;do
     cp_pkg_var $source_packages_dir/$t/Makefile package/$t/Makefile
