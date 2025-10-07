@@ -33,7 +33,6 @@ jobs:
         id: set_env
         run: |
           mv feeds/share/.github/workflows/scripts .github/workflows/
-          branchs=main
           branchs+=$(echo;git ls-remote origin | sed -n 's|.*\(openwrt-*\)|\1|p' | xargs)
 
           JSON='['
@@ -56,9 +55,30 @@ jobs:
 
           python3 -B .github/workflows/scripts/openwrt-get_targets.py | while read v;do echo "$v" >> "$GITHUB_OUTPUT"; done
 
-  plugin:
-    name: Plugin
+  plugin-main:
+    name: Plugin (main)
     needs: [setup]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+
+      - name: Determine update
+        run: bash main.sh update
+
+      - name: Determine changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          if [ -n "$(git status -s)" ];then
+            git pull && git add . && git commit -m "CI: sync code" && git push
+          fi
+
+  plugin-branch:
+    name: Plugin
+    needs: [setup,plugin-main]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -68,14 +88,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           ref: ${{ matrix.branch }}
           token: ${{ secrets.PAT }}
+      - uses: actions/checkout@v5
+        with:
+          path: feeds/main
 
       - name: Sync main
-        if: ${{ matrix.branch != 'main' }}
         run: |
-          git clone ${{ github.server_url }}/${{ github.repository }} feeds/main
-
           mkdir -p .github/workflows/
           rm -rfv .github/workflows/scripts
           cp -rfv feeds/main/.github/workflows/build-* .github/workflows/
@@ -91,7 +112,7 @@ jobs:
           if [ -n "$(git status -s)" ];then
             git pull && git add . && git commit -m "CI: sync code" && git push
           fi
-
+          
   mirror:
     name: Mirror
     runs-on: self-hosted
@@ -100,6 +121,8 @@ jobs:
       fail-fast: false
       matrix:
         branch: ${{fromJson(needs.setup.outputs.branchs)}}
+        include:
+          - branch: main
     container:
       image: openwrt/sdk:x86-64-${{ matrix.branch }}
       volumes:
@@ -211,6 +234,8 @@ jobs:
       fail-fast: false
       matrix:
         branch: ${{fromJson(needs.setup.outputs.branchs)}}
+        include:
+          - branch: main
     if: always()
     steps:
       - run: docker volume rm openwrt-sdk-x86-64-${{ matrix.branch }}-${{ github.run_id }} || true
