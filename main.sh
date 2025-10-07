@@ -57,7 +57,21 @@ function sparse_checkout(){
   )
 }
 
-function sparse_checkout_lede(){
+function sparse_checkout_main() {
+  [ "$branch" = "main" ] && return
+  source_dir=feeds/czy21/openwrt-plugin
+  source_packages=
+  source_packages+="package/net/adguardhome "
+  source_packages+="package/net/dnsproxy "
+  source_checkout=
+  source_checkout+=$source_packages
+  sparse_checkout $source_dir "https://github.com/czy21/openwrt-plugin" "$source_checkout" $branch
+  for t in $source_packages;do
+    mkdir -p $t && rsync -av --delete $source_dir/$t/ $t/
+  done
+}
+
+function sparse_checkout_lede() {
 
   source_lede_dir=feeds/coolsnowwolf/lede
   source_lede_checkout=
@@ -76,7 +90,7 @@ function sparse_checkout_lede(){
 
 }
 
-function sparse_checkout_immortalwrt(){
+function sparse_checkout_immortalwrt() {
 
   source_packages_dir=feeds/immortalwrt/packages
   source_packages_pkg=
@@ -84,8 +98,8 @@ function sparse_checkout_immortalwrt(){
     source_packages_pkg+="net/adguardhome "
   fi
   source_checkout=
-  source_checkout+="$source_packages_pkg"
-  
+  source_checkout+=$source_packages_pkg
+
   if [ -z "${source_checkout}" ];then
     return
   fi
@@ -98,7 +112,7 @@ function sparse_checkout_immortalwrt(){
   
 }
 
-function sparse_checkout_official(){
+function sparse_checkout_official() {
 
   source_packages_dir=feeds/openwrt/packages
   source_packages_pkg=
@@ -116,6 +130,7 @@ function sparse_checkout_official(){
 
 if [ "$1" == "update" ];then
 
+  sparse_checkout_main
   sparse_checkout_lede
   sparse_checkout_immortalwrt
   sparse_checkout_official
