@@ -84,8 +84,8 @@ function sparse_checkout_lede() {
   sparse_checkout $source_luci_dir "https://github.com/coolsnowwolf/luci" "$source_luci_pkg"
 
   for t in $source_luci_pkg;do
-    rm -rf luci/$(basename $t)
-    cp -rv $source_luci_dir/$t luci/
+    pkg=luci/$(basename $t)
+    mkdir -p $pkg && rsync -av --delete $source_luci_dir/$t/ $pkg/
   done
 
 }
