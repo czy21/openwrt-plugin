@@ -79,10 +79,18 @@ function sparse_checkout_lede(){
 function sparse_checkout_immortalwrt(){
 
   source_packages_dir=feeds/immortalwrt/packages
-  source_packages_pkg="net/adguardhome"
+  source_packages_pkg=
+  if [ "$branch" != "main" ];then
+    source_packages_pkg+="net/adguardhome "
+  fi
   source_checkout=
   source_checkout+="$source_packages_pkg"
-  sparse_checkout $source_packages_dir "https://github.com/immortalwrt/packages" "$source_checkout" $([ "$branch" == "main" ] && echo master || echo $branch)
+  
+  if [ -z "${source_checkout}" ];then
+    return
+  fi
+
+  sparse_checkout $source_packages_dir "https://github.com/immortalwrt/packages" "$source_checkout" $([ "$branch" = "main" ] && echo master || echo $branch)
 
   for t in $source_packages_pkg;do
     cp_pkg_var $source_packages_dir/$t/Makefile package/$t/Makefile
@@ -93,8 +101,12 @@ function sparse_checkout_immortalwrt(){
 function sparse_checkout_official(){
 
   source_packages_dir=feeds/openwrt/packages
-  source_packages_pkg="net/dnsproxy"
-  sparse_checkout $source_packages_dir "https://github.com/openwrt/packages" "$source_packages_pkg" $([ "$branch" == "main" ] && echo master || echo $branch)
+  source_packages_pkg=
+  source_packages_pkg+="net/dnsproxy "
+  if [ "$branch" = "main" ];then
+    source_packages_pkg+="net/adguardhome "
+  fi
+  sparse_checkout $source_packages_dir "https://github.com/openwrt/packages" "$source_packages_pkg" $([ "$branch" = "main" ] && echo master || echo $branch)
 
   for t in $source_packages_pkg;do
     cp_pkg_var $source_packages_dir/$t/Makefile package/$t/Makefile
