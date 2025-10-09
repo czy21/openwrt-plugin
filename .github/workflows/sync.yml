@@ -138,7 +138,7 @@ jobs:
 
           artifact_packages_rel=releases/packages-${openwrt_branch_number}
           
-          if [ "${{ matrix.branch }}" == "main" ];then
+          if [ "${{ matrix.branch }}" = "main" ];then
             artifact_packages_rel=snapshots/packages
           fi
 
@@ -185,42 +185,41 @@ jobs:
           packages+="*vlmcsd* "
           packages+="luci-app-openclash* "
 
-          echo -n "" > include-archs-packages
+          : > include-archs-packages
           for a in $archs;do
             for p in $packages;do
-              echo "*/$a/*/$p" >> include-archs-packages
+              echo "*/$a/*/$p"
             done
-          done
+          done >> include-archs-packages
 
-          echo -n "" > include-packages
-          for p in $packages;do
-            echo "$p" >> include-packages
-          done
+          immortalwrt_dir=${{ steps.set_env.outputs.download_dir }}/immortalwrt
+          mkdir -p $immortalwrt_dir
 
-          rsync --password-file=rsync-immortalwrt-password -avmR --include-from=include-archs-packages --include=*/ --exclude=* rsync://firmwarepublic@rsync-mirror.infra.immortalwrt.org/firmware-public/${{ steps.set_env.outputs.artifact_packages_rel }} ${{ steps.set_env.outputs.artifact_dir }}
+          rsync --password-file=rsync-immortalwrt-password -avmR --include-from=include-archs-packages --include=*/ --exclude=* --delete rsync://firmwarepublic@rsync-mirror.infra.immortalwrt.org/firmware-public/${{ steps.set_env.outputs.artifact_packages_rel }} $immortalwrt_dir
           
-          (
-            cd ${{ steps.set_env.outputs.artifact_packages_dir }}
-            for t in `find -maxdepth 1 -type d -not -path . -exec basename {} \;`;do
-              plugin_rel=$t/plugin
-              mkdir -p $plugin_rel
-              find $t \( -name "*.ipk" -o -name "*.apk" \) -and \( -not -path '*plugin/*' \) -exec cp -r {} ${plugin_rel} \;
-              rsync -avmR --include-from=/builder/include-packages --include=*/ --exclude=* --delete $plugin_rel ${{ steps.set_env.outputs.download_packages_dir }}
+          for t in $archs;do
+            src_arch=${{ steps.set_env.outputs.download_dir }}/immortalwrt/${{ steps.set_env.outputs.artifact_packages_rel }}/$t
+            [ -d "$src_arch" ] || continue
+            dst_arch=${{ steps.set_env.outputs.download_packages_dir }}/$t
+            plugin_path=$dst_arch/plugin
+            mkdir -p $plugin_path
+            find $src_arch \( -name "*.ipk" -o -name "*.apk" \) -print0 | while IFS= read -r -d '' src_file;do
+              dst_file=$plugin_path/$(basename $src_file)
+              rm -rf $dst_file && ln -v $src_file $dst_file
             done
-          )
+          done
 
       - name: Generate index
         working-directory: /builder
         shell: su buildbot -c "bash {0}"
         run: |
           if grep -q '^CONFIG_USE_APK=y' .config;then
-            sed -i -e 's|--sign $(BUILD_KEY_APK_SEC)|\0 --allow-untrusted|' package/Makefile
             ln -snf /data/apk.key private-key.pem
           else
             ln -snf /data/pri.key key-build
           fi
 
-          find ${{ steps.set_env.outputs.download_packages_dir }} -type d -mindepth 2 -maxdepth 2 -exec sh -c 'f={};echo "Generating index for package $f";make -j4 package/index PACKAGE_SUBDIRS=$f V=s' \;
+          find ${{ steps.set_env.outputs.download_packages_dir }} -mindepth 2 -maxdepth 2 -type d -exec sh -c 'f={};a=$(basename $(dirname $f));echo "Generating index for package $f";make -j6 package/index CONFIG_SIGNED_PACKAGES= CONFIG_TARGET_ARCH_PACKAGES=$a PACKAGE_SUBDIRS=$f V=s' \;
 
           if grep -q '^CONFIG_USE_APK=y' .config;then
             find ${{ steps.set_env.outputs.download_packages_dir }} -name 'packages.adb' -exec /builder/staging_dir/host/bin/apk adbsign --allow-untrusted --reset-signatures --sign-key /data/apk.key {} \;

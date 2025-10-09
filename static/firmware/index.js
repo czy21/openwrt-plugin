@@ -715,42 +715,59 @@ function changeModel(version, overview, title) {
     fetch(`${base_url}/targets/${entry.target}/profiles.json`, {
       cache: "no-cache",
     })
-      .then((obj) => {
-        if (obj.status != 200) {
-          throw new Error(`Failed to fetch ${obj.url}`);
-        }
-        hideAlert();
-        return obj.json();
-      })
-      .then((mobj) => {
-        mobj["id"] = entry.id;
-        mobj["images"] = mobj["profiles"][entry.id]["images"];
-        mobj["titles"] = mobj["profiles"][entry.id]["titles"];
-        mobj["device_packages"] = mobj["profiles"][entry.id]["device_packages"];
-        mobj["user_packages"] = mobj["profiles"][entry.id]["user_packages"];
-        updateImages(mobj);
-        current_device = {
-          version: version,
-          id: entry.id,
-          target: entry.target,
-        };
-      })
-      .catch((err) => showAlert(err.message));
-      fetch(`${base_url}/targets/${entry.target}/repositories${version === 'SNAPSHOT'?'':".conf"}`, {
-        cache: "no-cache",
-      })
-      .then((obj) => {
-        if (obj.status != 200) {
-          throw new Error(`Failed to fetch ${obj.url}`);
-        }
-        hideAlert();
-        return obj.text();
-      })
-      .then((mobj) => {
-        $("#repositories").value = mobj
-      })
-      .catch((err) => showAlert(err.message));
-      $("#repositories-keys").value = config.repository_keys.join("\n")
+    .then((obj) => {
+      if (obj.status != 200) {
+        throw new Error(`Failed to fetch ${obj.url}`);
+      }
+      hideAlert();
+      return obj.json();
+    })
+    .then((mobj) => {
+      mobj["id"] = entry.id;
+      mobj["images"] = mobj["profiles"][entry.id]["images"];
+      mobj["titles"] = mobj["profiles"][entry.id]["titles"];
+      mobj["device_packages"] = mobj["profiles"][entry.id]["device_packages"];
+      mobj["user_packages"] = mobj["profiles"][entry.id]["user_packages"];
+      updateImages(mobj);
+      current_device = {
+        version: version,
+        id: entry.id,
+        target: entry.target,
+      };
+    })
+    .catch((err) => showAlert(err.message));
+
+    fetch(`${base_url}/targets/${entry.target}/repositories${version === 'SNAPSHOT'?'':".conf"}`, {
+      cache: "no-cache",
+    })
+    .then((obj) => {
+      if (obj.status != 200) {
+        throw new Error(`Failed to fetch ${obj.url}`);
+      }
+      hideAlert();
+      return obj.text();
+    })
+    .then((mobj) => {
+      $("#repositories").value = mobj
+    })
+    .catch((err) => showAlert(err.message));
+    $("#repositories-keys").value = config.repository_keys.join("\n")
+
+    fetch(`${base_url}/targets/${entry.target}/setup.sh`, {
+      cache: "no-cache",
+    })
+    .then((obj) => {
+      if (obj.status != 200) {
+        throw new Error(`Failed to fetch ${obj.url}`);
+      }
+      hideAlert();
+      return obj.text();
+    })
+    .then((mobj) => {
+      current_device["setupText"] = mobj
+    })
+    .catch((err) => showAlert(err.message));
+
   } else {
     updateImages();
     current_device = {};
@@ -788,23 +805,8 @@ function setup_uci_defaults() {
   let link = icon.getAttribute("data-link");
   let textarea = $("#uci-defaults-content");
   icon.onclick = async function () {
-    await fetch(`${config.image_url}/${$("#versions").value === 'SNAPSHOT'?'snapshots':'releases'}/setup.sh`)
-      .then((obj) => {
-        if (obj.status != 200) {
-          throw new Error(`Failed to fetch ${obj.url}`);
-        }
-        hideAlert();
-        return obj.text();
-      })
-      .then((text) => {
-        // toggle text
-        if (textarea.value.indexOf(text) != -1) {
-          textarea.value = textarea.value.replace(text, "");
-        } else {
-          textarea.value = textarea.value + text;
-        }
-      })
-      .catch((err) => showAlert(err.message));
+    textarea.value = ""
+    textarea.value = textarea.value + current_device['setupText']
     await fetch(link)
       .then((obj) => {
         if (obj.status != 200) {
@@ -814,12 +816,7 @@ function setup_uci_defaults() {
         return obj.text();
       })
       .then((text) => {
-        // toggle text
-        if (textarea.value.indexOf(text) != -1) {
-          textarea.value = textarea.value.replace(text, "");
-        } else {
-          textarea.value = textarea.value + text;
-        }
+        textarea.value = textarea.value + text;
       })
       .catch((err) => showAlert(err.message));
   };
