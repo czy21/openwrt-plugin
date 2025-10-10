@@ -9,9 +9,9 @@ on:
       mirror: 
         type: choice
         required: true
-        default: https://mirrors.pku.edu.cn/openwrt
+        default: https://nexus.czy21.com/repository/openwrt-download
         options: 
-          - https://mirrors.pku.edu.cn/openwrt
+          - https://nexus.czy21.com/repository/openwrt-download
           - https://mirrors.hit.edu.cn/openwrt
       version:
         type: string

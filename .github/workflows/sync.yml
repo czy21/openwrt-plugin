@@ -10,9 +10,9 @@ on:
       mirror: 
         type: choice
         required: true
-        default: https://mirrors.pku.edu.cn/openwrt
+        default: https://nexus.czy21.com/repository/openwrt-download
         options: 
-          - https://mirrors.pku.edu.cn/openwrt
+          - https://nexus.czy21.com/repository/openwrt-download
           - https://mirrors.hit.edu.cn/openwrt
 
 jobs:
@@ -51,8 +51,7 @@ jobs:
 
           echo "branchs=$JSON" >> $GITHUB_OUTPUT
 
-          wget https://mirrors.pku.edu.cn/files/openwrt/snapshots/packages/ -O .packages.json
-
+          wget https://downloads.openwrt.org/snapshots/.targets.json -O .targets.json
           python3 -B .github/workflows/scripts/openwrt-get_targets.py | while read v;do echo "$v" >> "$GITHUB_OUTPUT"; done
 
   plugin-main:
@@ -136,33 +135,27 @@ jobs:
         run: |
           openwrt_branch_number=$(echo ${{ matrix.branch }} | sed 's|openwrt-||')
 
-          artifact_packages_rel=releases/packages-${openwrt_branch_number}
+          artifact_package_rel=releases/packages-${openwrt_branch_number}
           
           if [ "${{ matrix.branch }}" = "main" ];then
-            artifact_packages_rel=snapshots/packages
+            artifact_package_rel=snapshots/packages
           fi
 
-          artifact_dir=/builder/bin/download
-          artifact_packages_dir=${artifact_dir}/$artifact_packages_rel
-
           download_dir=/data/download
-          download_packages_dir=${download_dir}/$artifact_packages_rel
+          download_package_dir=${download_dir}/$artifact_package_rel
 
           echo "openwrt_branch_number=${openwrt_branch_number}" >> "$GITHUB_OUTPUT"
 
-          echo "artifact_packages_rel=${artifact_packages_rel}" >> "$GITHUB_OUTPUT"
-
-          echo "artifact_dir=${artifact_dir}" >> "$GITHUB_OUTPUT"
-          echo "artifact_packages_dir=${artifact_packages_dir}" >> "$GITHUB_OUTPUT"
+          echo "artifact_package_rel=${artifact_package_rel}" >> "$GITHUB_OUTPUT"
 
           echo "download_dir=${download_dir}" >> "$GITHUB_OUTPUT"
-          echo "download_packages_dir=${download_packages_dir}" >> "$GITHUB_OUTPUT"
+          echo "download_package_dir=${download_package_dir}" >> "$GITHUB_OUTPUT"
 
       - name: Setup
         working-directory: /builder
         shell: su buildbot -c "bash {0}"
         env: 
-          UPSTREAM_URL: ${{ inputs.mirror || 'https://mirrors.hit.edu.cn/openwrt' }}
+          UPSTREAM_URL: ${{ inputs.mirror || 'https://nexus.czy21.com/repository/openwrt-download' }}
         run: |
           set -e
 
@@ -170,8 +163,7 @@ jobs:
           
           make defconfig
           
-          mkdir -p ${{ steps.set_env.outputs.artifact_dir }}
-          mkdir -p ${{ steps.set_env.outputs.download_packages_dir }}
+          mkdir -p ${{ steps.set_env.outputs.download_package_dir }}
 
       - name: Sync
         working-directory: /builder
@@ -195,12 +187,12 @@ jobs:
           immortalwrt_dir=${{ steps.set_env.outputs.download_dir }}/immortalwrt
           mkdir -p $immortalwrt_dir
 
-          rsync --password-file=rsync-immortalwrt-password -avmR --include-from=include-archs-packages --include=*/ --exclude=* --delete rsync://firmwarepublic@rsync-mirror.infra.immortalwrt.org/firmware-public/${{ steps.set_env.outputs.artifact_packages_rel }} $immortalwrt_dir
+          rsync --password-file=rsync-immortalwrt-password -avmR --include-from=include-archs-packages --include=*/ --exclude=* rsync://firmwarepublic@rsync-mirror.infra.immortalwrt.org/firmware-public/${{ steps.set_env.outputs.artifact_package_rel }} $immortalwrt_dir
           
           for t in $archs;do
-            src_arch=${{ steps.set_env.outputs.download_dir }}/immortalwrt/${{ steps.set_env.outputs.artifact_packages_rel }}/$t
+            src_arch=${{ steps.set_env.outputs.download_dir }}/immortalwrt/${{ steps.set_env.outputs.artifact_package_rel }}/$t
             [ -d "$src_arch" ] || continue
-            dst_arch=${{ steps.set_env.outputs.download_packages_dir }}/$t
+            dst_arch=${{ steps.set_env.outputs.download_package_dir }}/$t
             plugin_path=$dst_arch/plugin
             mkdir -p $plugin_path
             find $src_arch \( -name "*.ipk" -o -name "*.apk" \) -print0 | while IFS= read -r -d '' src_file;do
@@ -219,10 +211,10 @@ jobs:
             ln -snf /data/pri.key key-build
           fi
 
-          find ${{ steps.set_env.outputs.download_packages_dir }} -mindepth 2 -maxdepth 2 -type d -exec sh -c 'f={};a=$(basename $(dirname $f));echo "Generating index for package $f";make -j6 package/index CONFIG_SIGNED_PACKAGES= CONFIG_TARGET_ARCH_PACKAGES=$a PACKAGE_SUBDIRS=$f V=s' \;
+          find ${{ steps.set_env.outputs.download_package_dir }} -mindepth 2 -maxdepth 2 -type d -exec sh -c 'f={};a=$(basename $(dirname $f));echo "Generating index for package $f";make -j6 package/index CONFIG_SIGNED_PACKAGES= CONFIG_TARGET_ARCH_PACKAGES=$a PACKAGE_SUBDIRS=$f V=s' \;
 
           if grep -q '^CONFIG_USE_APK=y' .config;then
-            find ${{ steps.set_env.outputs.download_packages_dir }} -name 'packages.adb' -exec /builder/staging_dir/host/bin/apk adbsign --allow-untrusted --reset-signatures --sign-key /data/apk.key {} \;
+            find ${{ steps.set_env.outputs.download_package_dir }} -name 'packages.adb' -exec /builder/staging_dir/host/bin/apk adbsign --allow-untrusted --reset-signatures --sign-key /data/apk.key {} \;
           fi
           
   clean:
