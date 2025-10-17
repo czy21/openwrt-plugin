@@ -7,6 +7,8 @@ target_dir=
 domain_str=
 checkend=432000 # 5day
 reloadcmd=/etc/acme/post.sh
+force=false
+
 function usage(){
 echo "Usage:
   -d  <x.com,y.com>   Domains
@@ -14,12 +16,13 @@ echo "Usage:
   -t  <target_dir>    Cert target dir
   -c  <command>       Command to execute after installcert (default \"${reloadcmd}\")
   -e  <seconds>       Check whether target cert expires in the next arg seconds (default \"${checkend}\")
+  -f                  Force
   -h
 "
 exit 2
 }
 
-while getopts "d:s:t:c:e:h" opt
+while getopts "d:s:t:c:e:fh" opt
 do
         case $opt in
                 s)
@@ -37,6 +40,9 @@ do
                 e)
                   checkend=$OPTARG
                 ;;
+                f)
+                   force=true
+                ;;
                 h)
                 usage
                 ;;
@@ -53,7 +59,7 @@ domains="$(echo $domain_str | tr ',' ' ')"
 mkdir -p ${target_dir}
 for d in $domains; do
   target_cer=${target_dir}/${d}.cer
-  if [[ ! -e ${target_cer} ]] || [[ -e ${target_cer} && $(openssl x509 -in ${target_cer} -noout -enddate -checkend ${checkend} | grep 'will expire') ]];then
+  if [[ ${force} ]] || [[ ! -e ${target_cer} ]] || [[ -e ${target_cer} && $(openssl x509 -in ${target_cer} -noout -enddate -checkend ${checkend} | grep 'will expire') ]];then
     /usr/lib/acme/client/acme.sh --installcert --home ${source_dir} -d ${d} --cert-file ${target_cer} --key-file ${target_dir}/${d}.key --fullchain-file ${target_dir}/${d}.pem --reloadcmd "$reloadcmd" | logger -t "${LOG_TAG}"
   fi
 done
