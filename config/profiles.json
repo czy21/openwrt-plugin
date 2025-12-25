@@ -4,6 +4,8 @@
       "-dnsmasq",
       "bash",
       "kmod-tcp-bbr",
+      "kmod-nf-tproxy",
+      "kmod-nf-socket",
       "dnsmasq-full",
       "netdata",
       "iperf3",
@@ -51,6 +53,8 @@
     "simple_128M":[
       "-dnsmasq",
       "kmod-tcp-bbr",
+      "kmod-nf-tproxy",
+      "kmod-nf-socket",
       "dnsmasq-full",
       "softethervpn5-server",
       "openssh-client",
