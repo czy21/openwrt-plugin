@@ -18,6 +18,12 @@
       "user_packages": [
         "{{ simple_128M | join(' ') }}"
       ]
+    },
+    "h3c_magic-nx30-pro": {
+      "user_configs": [],
+      "user_packages": [
+        "{{ simple_128M | join(' ') }}"
+      ]
     }
   },
   "target": "mediatek/filogic"
