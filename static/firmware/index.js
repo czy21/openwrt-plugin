@@ -653,10 +653,11 @@ function updateImages(mobj) {
       $("#asu").open = false;
       hide("#asu-log");
       hide("#asu-buildstatus");
+
       // Pre-select ASU packages.
       $("#default-packages").value = mobj.default_packages.concat(mobj.device_packages).join(" ");
-      console.log(mobj)
       $("#asu-packages").value = (mobj.user_packages || []).join(" ");
+      console.log(mobj)
     }
 
     translate();
@@ -737,21 +738,28 @@ function changeModel(version, overview, title) {
     })
     .catch((err) => showAlert(err.message));
 
-    fetch(`${base_url}/targets/${entry.target}/repositories${version === 'SNAPSHOT'?'':".conf"}`, {
-      cache: "no-cache",
-    })
-    .then((obj) => {
-      if (obj.status != 200) {
-        throw new Error(`Failed to fetch ${obj.url}`);
-      }
-      hideAlert();
-      return obj.text();
-    })
-    .then((mobj) => {
-      $("#repositories").value = mobj
-    })
-    .catch((err) => showAlert(err.message));
+    function loadRepositories(decoRepositoriesFunc){
+      fetch(`${base_url}/targets/${entry.target}/repositories${version === 'SNAPSHOT'?'':".conf"}`, {
+        cache: "no-cache",
+      })
+      .then((obj) => {
+        if (obj.status != 200) {
+          throw new Error(`Failed to fetch ${obj.url}`);
+        }
+        hideAlert();
+        return obj.text();
+      })
+      .then((mobj) => {
+        $("#repositories").value = decoRepositoriesFunc ? decoRepositoriesFunc(mobj) : mobj
+      })
+      .catch((err) => showAlert(err.message));
+    }
     $("#repositories-keys").value = config.repository_keys.join("\n")
+
+    loadRepositories()
+
+    $("#asu-mirror").value = "https://downloads.openwrt.org"
+    $("#asu-mirror").addEventListener("change", () => loadRepositories(mobj => mobj.replaceAll("https://downloads.openwrt.org", $("#asu-mirror").value)));
 
     fetch(`${base_url}/targets/${entry.target}/setup.sh`, {
       cache: "no-cache",
@@ -841,6 +849,13 @@ async function init() {
   if (typeof config.asu_url !== "undefined") {
     // show ASU panel
     show("#asu");
+  }
+
+  for (const item of config.repository_mirrors) {
+    const option = document.createElement("OPTION");
+    option.innerText = item;
+    option.value = item;
+    $("#asu-mirror").appendChild(option);
   }
 
   let upstream_config = await fetch(config.image_url + "/.versions.json", {
