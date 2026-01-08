@@ -27,6 +27,10 @@
         "luci-app-adguardhome",
         "luci-app-upnp"
       ]
+    },
+    "jdcloud_re-sp-01b": {
+      "user_configs": [],
+      "user_packages": []
     }
   },
   "target": "ramips/mt7621"
