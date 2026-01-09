@@ -10,9 +10,9 @@ on:
       mirror: 
         type: choice
         required: true
-        default: https://nexus.czy21.com/repository/openwrt-download
+        default: https://downloads.openwrt.org
         options: 
-          - https://nexus.czy21.com/repository/openwrt-download
+          - https://downloads.openwrt.org
           - https://mirrors.hit.edu.cn/openwrt
       packages:
         type: string
@@ -24,6 +24,6 @@ jobs:
   build:
     uses: czy21/share/.github/workflows/openwrt-build-package.yml@main
     with: 
-      mirror: ${{ inputs.mirror || 'https://mirrors.hit.edu.cn/openwrt' }}
+      mirror: ${{ inputs.mirror || 'https://downloads.openwrt.org' }}
       packages: ${{ inputs.packages }}
       debug: ${{ inputs.debug || false }}
