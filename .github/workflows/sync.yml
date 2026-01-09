@@ -176,6 +176,8 @@ jobs:
           packages=
           packages+="*vlmcsd* "
           packages+="luci-app-openclash* "
+          packages+="luci-app-nfs* "
+          packages+="luci-i18n-nfs* "
 
           : > include-archs-packages
           for a in $archs;do
