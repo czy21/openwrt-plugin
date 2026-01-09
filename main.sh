@@ -79,7 +79,7 @@ function sparse_checkout_main() {
 function sparse_checkout_lede() {
 
   source_luci_dir=feeds/coolsnowwolf/luci
-  source_luci_pkg="applications/luci-app-socat applications/luci-app-nfs"
+  source_luci_pkg="applications/luci-app-socat "
   sparse_checkout $source_luci_dir "https://github.com/coolsnowwolf/luci" "$source_luci_pkg"
 
   for t in $source_luci_pkg;do

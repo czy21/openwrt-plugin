@@ -155,7 +155,7 @@ jobs:
         working-directory: /builder
         shell: su buildbot -c "bash {0}"
         env: 
-          UPSTREAM_URL: ${{ inputs.mirror || 'https://downloads.openwrt.org' }}
+          UPSTREAM_URL: ${{ inputs.mirror || 'https://mirrors.hit.edu.cn/openwrt' }}
         run: |
           set -e
 
