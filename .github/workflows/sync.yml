@@ -10,9 +10,9 @@ on:
       mirror: 
         type: choice
         required: true
-        default: https://nexus.czy21.com/repository/openwrt-download
+        default: https://downloads.openwrt.org
         options: 
-          - https://nexus.czy21.com/repository/openwrt-download
+          - https://downloads.openwrt.org
           - https://mirrors.hit.edu.cn/openwrt
 
 jobs:
@@ -155,7 +155,7 @@ jobs:
         working-directory: /builder
         shell: su buildbot -c "bash {0}"
         env: 
-          UPSTREAM_URL: ${{ inputs.mirror || 'https://nexus.czy21.com/repository/openwrt-download' }}
+          UPSTREAM_URL: ${{ inputs.mirror || 'https://downloads.openwrt.org' }}
         run: |
           set -e
 
