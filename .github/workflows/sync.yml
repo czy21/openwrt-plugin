@@ -155,7 +155,7 @@ jobs:
         working-directory: /builder
         shell: su buildbot -c "bash {0}"
         env: 
-          UPSTREAM_URL: ${{ inputs.mirror || 'https://mirrors.hit.edu.cn/openwrt' }}
+          UPSTREAM_URL: ${{ inputs.mirror || 'https://downloads.openwrt.org' }}
         run: |
           set -e
 
@@ -176,8 +176,6 @@ jobs:
           packages=
           packages+="*vlmcsd* "
           packages+="luci-app-openclash* "
-          packages+="luci-app-nfs* "
-          packages+="luci-i18n-nfs* "
 
           : > include-archs-packages
           for a in $archs;do
