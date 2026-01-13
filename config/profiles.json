@@ -50,7 +50,32 @@
       "luci-app-frps",
       "luci-app-nut"
     ],
-    "simple_128M":[
+    "simple_32M": [
+      "-dnsmasq",
+      "bash",
+      "dnsmasq-full",
+      "fdisk",
+      "cfdisk",
+      "e2fsprogs",
+      "blockd",
+      "iperf3",
+      "kmod-tcp-bbr",
+      "kmod-fs-ext4",
+      "kmod-usb-storage",
+      "kmod-usb-storage-extras",
+      "qrencode",
+      "luci",
+      "luci-compat",
+      "luci-proto-wireguard",
+      "luci-app-ddns",
+      "ddns-scripts",
+      "ddns-scripts-aliyun",
+      "ddns-scripts-cloudflare",
+      "luci-app-nlbwmon",
+      "luci-app-wol",
+      "luci-app-upnp"
+    ],
+    "simple_128M": [
       "-dnsmasq",
       "kmod-tcp-bbr",
       "kmod-nf-tproxy",
