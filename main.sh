@@ -124,15 +124,7 @@ function sparse_checkout_official() {
   source_checkout=
   source_checkout+=$source_packages_pkg
 
-  if [ "$branch" = "main" ];then
-    source_checkout+="net/ddns-scripts/files/usr/lib/ddns/update_aliyun_com.sh "
-  fi
-
   sparse_checkout $source_packages_dir "https://github.com/openwrt/packages" "$source_packages_pkg" $([ "$branch" = "main" ] && echo master || echo $branch)
-
-  if [ "$branch" = "main" ];then
-    cp -rv $source_packages_dir/net/ddns-scripts/files/usr/lib/ddns/update_aliyun_com.sh package/net/ddns-scripts-aliyun/files/
-  fi
 
   for t in $source_packages_pkg;do
     cp_pkg_var $source_packages_dir/$t/Makefile package/$t/Makefile
