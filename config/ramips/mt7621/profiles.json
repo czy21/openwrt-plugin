@@ -3,55 +3,13 @@
   "profiles": {
     "d-team_newifi-d2": {
       "user_packages": [
-        "-dnsmasq",
-        "bash",
-        "dnsmasq-full",
-        "fdisk",
-        "cfdisk",
-        "blockd",
-        "iperf3",
-        "e2fsprogs",
-        "kmod-tcp-bbr",
-        "kmod-fs-ext4",
-        "kmod-usb-storage",
-        "kmod-usb-storage-extras",
-        "qrencode",
-        "ddns-scripts",
-        "ddns-scripts-aliyun",
-        "ddns-scripts-cloudflare",
-        "luci",
-        "luci-compat",
-        "luci-proto-wireguard",
-        "luci-app-ddns",
-        "luci-app-nlbwmon",
-        "luci-app-wol",
-        "luci-app-adguardhome",
-        "luci-app-upnp"
+        "{{ simple_32M | join(' ') }}"
       ]
     },
     "jdcloud_re-sp-01b": {
       "user_configs": [],
       "user_packages": [
-        "-dnsmasq",
-        "bash",
-        "dnsmasq-full",
-        "fdisk",
-        "cfdisk",
-        "blockd",
-        "iperf3",
-        "e2fsprogs",
-        "kmod-tcp-bbr",
-        "kmod-fs-ext4",
-        "kmod-usb-storage",
-        "kmod-usb-storage-extras",
-        "qrencode",
-        "ddns-scripts",
-        "ddns-scripts-aliyun",
-        "ddns-scripts-cloudflare",
-        "luci",
-        "luci-compat",
-        "luci-proto-wireguard",
-        "qrencode"
+        "{{ simple_32M | join(' ') }}"
       ]
     }
   },
