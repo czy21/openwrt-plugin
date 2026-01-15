@@ -73,7 +73,9 @@
       "ddns-scripts-cloudflare",
       "luci-app-nlbwmon",
       "luci-app-wol",
-      "luci-app-upnp"
+      "luci-app-upnp",
+      "luci-app-ksmbd",
+      "luci-app-nfs"
     ],
     "simple_128M": [
       "-dnsmasq",
@@ -116,7 +118,7 @@
       "msmtp",
       "luci-app-aria2",
       "ariang",
-      "luci-app-samba4",
+      "luci-app-ksmbd",
       "luci-app-nfs",
       "aliyun-cli"
     ],
