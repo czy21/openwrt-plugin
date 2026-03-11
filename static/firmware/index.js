@@ -739,7 +739,7 @@ function changeModel(version, overview, title) {
     .catch((err) => showAlert(err.message));
 
     function loadRepositories(decoRepositoriesFunc){
-      fetch(`${base_url}/targets/${entry.target}/repositories${version === 'SNAPSHOT'?'':".conf"}`, {
+      fetch(`${base_url}/targets/${entry.target}/repositories${(version === 'SNAPSHOT'||version.split('.')[0]>=25)?'':".conf"}`, {
         cache: "no-cache",
       })
       .then((obj) => {
