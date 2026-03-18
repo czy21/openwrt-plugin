@@ -115,6 +115,7 @@ function sparse_checkout_official() {
 
   source_packages_dir=feeds/openwrt/packages
   source_packages_pkg=
+  source_packages_pkg+="net/ocserv "
   source_packages_pkg+="net/dnsproxy "
 
   if [ "$branch" = "main" ];then
