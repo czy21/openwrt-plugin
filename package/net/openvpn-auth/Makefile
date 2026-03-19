@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openvpn-auth
-PKG_VERSION:=1.0.0
+PKG_VERSION:=1.1.0
 PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
@@ -16,7 +16,6 @@ include $(INCLUDE_DIR)/package.mk
 define Package/openvpn-auth
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=+python3
   TITLE:=Open source VPN solution Auth
   MAINTAINER:=Bruce CHEN <a805899926@gmail.com>
   SUBMENU:=VPN
@@ -33,7 +32,6 @@ endef
 define Package/openvpn-auth/install
 	$(INSTALL_DIR) $(1)/etc/openvpn
 	$(INSTALL_BIN) ./files/auth.sh $(1)/etc/openvpn/
-	$(INSTALL_BIN) ./files/auth.py $(1)/etc/openvpn/
 endef
 
 $(eval $(call BuildPackage,openvpn-auth))
