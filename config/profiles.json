@@ -32,7 +32,6 @@
       "luci-app-adguardhome",
       "luci-app-dnsproxy",
       "luci-app-smartdns",
-      "luci-app-socat",
       "luci-app-ocserv",
       "luci-app-acme",
       "acme-acmesh-dnsapi",
@@ -48,7 +47,8 @@
       "luci-app-commands",
       "luci-app-frpc",
       "luci-app-frps",
-      "luci-app-nut"
+      "luci-app-nut",
+      "luci-app-sshtunnel"
     ],
     "simple_32M": [
       "-dnsmasq",
