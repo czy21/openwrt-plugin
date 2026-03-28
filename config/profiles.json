@@ -32,6 +32,7 @@
       "openvpn-openssl",
       "openvpn-easy-rsa",
       "openvpn-auth",
+      "freeradius3-utils",
       "luci-app-ocserv",
       "luci-app-acme",
       "acme-acmesh-dnsapi",
