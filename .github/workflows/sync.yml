@@ -24,8 +24,8 @@ jobs:
       branchs: ${{ steps.set_env.outputs.branchs }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
-      - uses: actions/checkout@v5
+        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
         with:
           repository: czy21/share
           path: feeds/share
@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.PAT }}
 
@@ -85,12 +85,12 @@ jobs:
         branch: ${{fromJson(needs.setup.outputs.branchs)}}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ matrix.branch }}
           token: ${{ secrets.PAT }}
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           path: feeds/main
 

@@ -16,10 +16,10 @@ jobs:
       options: --user root --privileged --pull always
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout firmware-selector-openwrt-org
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with: 
           repository: openwrt/firmware-selector-openwrt-org
           path: feeds/firmware-selector-openwrt-org
@@ -34,7 +34,7 @@ jobs:
         run: cp -r feeds/firmware-selector-openwrt-org/www/* /data/firmware/
 
       - name: Checkout openwrt-download-page
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with: 
           repository: aparcar/openwrt-download-page
           path: feeds/openwrt-download-page
