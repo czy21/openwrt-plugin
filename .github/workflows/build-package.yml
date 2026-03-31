@@ -13,7 +13,7 @@ on:
         default: https://downloads.openwrt.org
         options: 
           - https://downloads.openwrt.org
-          - https://mirrors.hit.edu.cn/openwrt
+          - https://mirrors.ustc.edu.cn/openwrt/
       packages:
         type: string
         description: "packages: adguardhome dnsproxy"
