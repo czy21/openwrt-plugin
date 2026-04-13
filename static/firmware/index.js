@@ -119,7 +119,7 @@ function buildAsuRequest(request_hash) {
     version: $("#versions").value,
     diff_packages: false,
     client: "ofs/" + ofs_version,
-    repositories: $("#repositories").value.includes("src/gz") ? Object.fromEntries($("#repositories").value.split('\n').filter(t => t.startsWith("src/gz")).map(t => [t.split(" ")[1], t.split(" ")[2]])) : {},
+    repositories: $("#repositories").value.includes("src/gz") ? Object.fromEntries($("#repositories").value.split('\n').filter(t => t != "" &&t.startsWith("src/gz")).map(t => [t.split(" ")[1], t.split(" ")[2]])) : Object.fromEntries($("#repositories").value.split('\n').filter(t => t != "").map((t,i)=>[`apk_${i}`,t])),
     repository_keys: $("#repositories-keys").value.split('\n') || []
   });
   var method = "POST";
@@ -739,7 +739,8 @@ function changeModel(version, overview, title) {
     .catch((err) => showAlert(err.message));
 
     function loadRepositories(decoRepositoriesFunc){
-      fetch(`${base_url}/targets/${entry.target}/repositories${(version === 'SNAPSHOT'||version.split('.')[0]>=25)?'':".conf"}`, {
+      const use_apk = version === 'SNAPSHOT'||version.split('.')[0]>=25
+      fetch(`${base_url}/targets/${entry.target}/repositories${use_apk?'':".conf"}`, {
         cache: "no-cache",
       })
       .then((obj) => {
@@ -751,10 +752,10 @@ function changeModel(version, overview, title) {
       })
       .then((mobj) => {
         $("#repositories").value = decoRepositoriesFunc ? decoRepositoriesFunc(mobj) : mobj
+        $("#repositories-keys").value = use_apk ? '' : config.repository_keys.join("\n")
       })
       .catch((err) => showAlert(err.message));
     }
-    $("#repositories-keys").value = config.repository_keys.join("\n")
 
     loadRepositories()
 
