@@ -12,7 +12,7 @@ on:
         default: https://downloads.openwrt.org
         options: 
           - https://downloads.openwrt.org
-          - https://mirrors.ustc.edu.cn/openwrt/
+          - https://mirrors.ustc.edu.cn/openwrt
       version:
         type: string
         description: "version: 24.10.2"
