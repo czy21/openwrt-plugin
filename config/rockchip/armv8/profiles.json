@@ -16,8 +16,7 @@
             ],
             "user_packages": [
                 "{{ simple | join(' ') }}",
-                "{{ common | join(' ') }}",
-                "{{ docker | join(' ') }}"
+                "{{ common | join(' ') }}"
             ]
         },
         "friendlyarm_nanopi-r5s": {
@@ -26,8 +25,16 @@
             ],
             "user_packages": [
                 "{{ simple | join(' ') }}",
-                "{{ common | join(' ') }}",
-                "{{ docker | join(' ') }}"
+                "{{ common | join(' ') }}"
+            ]
+        },
+        "friendlyarm_nanopi-r5c": {
+            "user_configs": [
+                "ROOTFS_PARTSIZE=1024"
+            ],
+            "user_packages": [
+                "{{ simple | join(' ') }}",
+                "{{ common | join(' ') }}"
             ]
         }
     },
