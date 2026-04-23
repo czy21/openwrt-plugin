@@ -176,6 +176,7 @@ jobs:
           packages=
           packages+="*vlmcsd* "
           packages+="luci-app-openclash* "
+          packages+="*cifs-mount* "
 
           : > include-archs-packages
           for a in $archs;do
