@@ -9,10 +9,10 @@ on:
       mirror: 
         type: choice
         required: true
-        default: https://downloads.openwrt.org
+        default: https://mirrors.ustc.edu.cn/openwrt
         options: 
           - https://downloads.openwrt.org
-          - https://mirrors.ustc.edu.cn/openwrt/
+          - https://mirrors.ustc.edu.cn/openwrt
       version:
         type: string
         description: "version: 24.10.2"
@@ -24,7 +24,7 @@ jobs:
   build:
     uses: czy21/share/.github/workflows/openwrt-build-image.yml@main
     with: 
-      mirror: ${{ inputs.mirror || 'https://downloads.openwrt.org' }}
+      mirror: ${{ inputs.mirror || 'https://mirrors.ustc.edu.cn/openwrt' }}
       version: ${{ inputs.version }}
       targets: ${{ inputs.targets }}
 
