@@ -13,7 +13,7 @@ on:
         default: https://downloads.openwrt.org
         options: 
           - https://downloads.openwrt.org
-          - https://mirrors.ustc.edu.cn/openwrt/
+          - https://mirrors.ustc.edu.cn/openwrt
 
 jobs:
   setup:
@@ -123,7 +123,7 @@ jobs:
         include:
           - branch: main
     container:
-      image: openwrt/sdk:x86-64-${{ matrix.branch }}
+      image: openwrt/sdk:x86-64-main
       volumes:
         - openwrt-sdk-x86-64-${{ matrix.branch }}-${{ github.run_id }}:/builder
         - openwrt-share:/data/
@@ -133,19 +133,26 @@ jobs:
         id: set_env
         shell: bash
         run: |
-          openwrt_branch_number=$(echo ${{ matrix.branch }} | sed 's|openwrt-||')
+          branch=${{ matrix.branch }}
+          branch_number=$(echo ${{ matrix.branch }} | sed 's|openwrt-||')
 
-          artifact_package_rel=releases/packages-${openwrt_branch_number}
+          artifact_release_rel=
+          artifact_package_rel=
           
-          if [ "${{ matrix.branch }}" = "main" ];then
+          if [ "${branch}" = "main" ];then
+            artifact_release_rel=snapshots
             artifact_package_rel=snapshots/packages
+          else
+            artifact_release_rel=releases/${branch_number}.0
+            artifact_package_rel=releases/packages-${branch_number}
           fi
 
           download_dir=/data/download
           download_package_dir=${download_dir}/$artifact_package_rel
 
-          echo "openwrt_branch_number=${openwrt_branch_number}" >> "$GITHUB_OUTPUT"
+          echo "branch_number=${branch_number}" >> "$GITHUB_OUTPUT"
 
+          echo "artifact_release_rel=${artifact_release_rel}" >> "$GITHUB_OUTPUT"
           echo "artifact_package_rel=${artifact_package_rel}" >> "$GITHUB_OUTPUT"
 
           echo "download_dir=${download_dir}" >> "$GITHUB_OUTPUT"
@@ -156,13 +163,14 @@ jobs:
         shell: su buildbot -c "bash {0}"
         env: 
           UPSTREAM_URL: ${{ inputs.mirror || 'https://downloads.openwrt.org' }}
+          VERSION_PATH: ${{ steps.set_env.outputs.artifact_release_rel }}
         run: |
           set -e
 
           [ ! -d ./scripts ] && sed -i "s|^sha256sum -c|# \0|" setup.sh && ./setup.sh
           
           make defconfig
-          
+
           mkdir -p ${{ steps.set_env.outputs.download_package_dir }}
 
       - name: Sync
@@ -206,17 +214,10 @@ jobs:
         working-directory: /builder
         shell: su buildbot -c "bash {0}"
         run: |
-          if grep -q '^CONFIG_USE_APK=y' .config;then
-            ln -snf /data/apk.key private-key.pem
-          else
-            ln -snf /data/pri.key key-build
-          fi
-
-          find ${{ steps.set_env.outputs.download_package_dir }} -mindepth 2 -maxdepth 2 -type d -exec sh -c 'f={};a=$(basename $(dirname $f));echo "Generating index for package $f";make -j6 package/index CONFIG_SIGNED_PACKAGES= CONFIG_TARGET_ARCH_PACKAGES=$a PACKAGE_SUBDIRS=$f V=s' \;
-
-          if grep -q '^CONFIG_USE_APK=y' .config;then
-            find ${{ steps.set_env.outputs.download_package_dir }} -name 'packages.adb' -exec /builder/staging_dir/host/bin/apk adbsign --allow-untrusted --reset-signatures --sign-key /data/apk.key {} \;
-          fi
+          ln -snf /data/apk.key private-key.pem
+          ln -snf /data/pri.key key-build
+          
+          find ${{ steps.set_env.outputs.download_package_dir }} -mindepth 2 -maxdepth 2 -type d -exec sh -c 'f={};a=$(basename $(dirname $f));echo "Generating index for package $f";make -j6 package/index CONFIG_SIGNED_PACKAGES=y CONFIG_TARGET_ARCH_PACKAGES=$a PACKAGE_SUBDIRS=$f V=s' \;
           
   clean:
     name: Clean
