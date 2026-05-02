@@ -6,6 +6,7 @@
       "kmod-tcp-bbr",
       "kmod-nf-tproxy",
       "kmod-nf-socket",
+      "kmod-ipt-ipset",
       "dnsmasq-full",
       "netdata",
       "iperf3",
@@ -54,6 +55,7 @@
     "simple_32M": [
       "-dnsmasq",
       "bash",
+      "kmod-ipt-ipset",
       "dnsmasq-full",
       "fdisk",
       "cfdisk",
@@ -83,6 +85,7 @@
       "kmod-tcp-bbr",
       "kmod-nf-tproxy",
       "kmod-nf-socket",
+      "kmod-ipt-ipset",
       "dnsmasq-full",
       "softethervpn5-server",
       "openssh-client",
