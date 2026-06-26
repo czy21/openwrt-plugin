@@ -1,0 +1,12 @@
+{
+  "arch_packages": "aarch64_cortex-a53",
+  "profiles": {
+    "cmcc_pz-l8": {
+      "user_configs": [],
+      "user_packages": [
+        "{{ simple_128M | join(' ') }}"
+      ]
+    }
+  },
+  "target": "qualcommax/ipq50xx"
+}

@@ -1,0 +1,43 @@
+name: Deploy static
+
+on:
+  push:
+    paths:
+      - 'static/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    container:
+      image: czy21/openwrt-builder
+      volumes:
+        - openwrt-share:/data/
+      options: --user root --privileged --pull always
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Checkout firmware-selector-openwrt-org
+        uses: actions/checkout@v6
+        with: 
+          repository: openwrt/firmware-selector-openwrt-org
+          path: feeds/firmware-selector-openwrt-org
+      
+      - name: Setup firmware-selector-openwrt-org config.json
+        run: |
+          cp -rv static/firmware/* feeds/firmware-selector-openwrt-org/www/
+          cd feeds/firmware-selector-openwrt-org/www/
+          sed -i "s;%GIT_VERSION%;$(git describe --tags);" index.js
+
+      - name: Deploy firmware-selector-openwrt-org to local
+        run: cp -r feeds/firmware-selector-openwrt-org/www/* /data/firmware/
+
+      - name: Checkout openwrt-download-page
+        uses: actions/checkout@v6
+        with: 
+          repository: aparcar/openwrt-download-page
+          path: feeds/openwrt-download-page
+       
+      - name: Deploy openwrt-download-page to local
+        run: cp -rv feeds/openwrt-download-page/dir-index.cgi /data/download/

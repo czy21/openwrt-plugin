@@ -1,0 +1,82 @@
+#!/bin/sh /etc/rc.common
+START=45
+STOP=99
+
+USE_PROCD=1
+
+nfs_share() {
+
+    local enabled path clients options
+    config_get_bool enabled "$1" enabled 0
+    for opt in path clients options;do
+        config_get "$opt" "$1" "$opt"
+    done
+    
+    if [ "$enabled" = 1 ]; then
+        for c in $(echo "$clients" | tr ',' ' ' | tr -s ' '); do
+            [ -n "$c" ] || continue
+            printf "%s\t%s\n" "$path" "$c($options)" >> /etc/exports
+        done
+    fi
+}
+
+nfs_share_stop() {
+    exportfs -au &>/dev/null
+}
+
+nfs_mount() {
+
+    local enabled target source options delay
+    config_get_bool enabled "$1" enabled 0
+    for opt in target source options delay
+    do
+        config_get "$opt" "$1" "$opt"
+    done
+
+    if [ "$enabled" = 1 ]; then
+        if [ "$delay" -a $delay -gt 0 ]; then
+            logger "NetMount: Sleep $delay seconds before mount"
+            sleep $delay
+        fi
+        grep -qs $target /proc/mounts
+        if [ $? -ne 0 ]; then
+            mkdir -p $target
+            logger "NetMount: Mounting $source in $target"
+            mount -t nfs -o $options $source $target
+        fi
+    elif [ "$enabled" = 0 ]; then
+        if grep -qs $target /proc/mounts; then
+            umount -fr $target
+            sleep $delay
+        fi
+    fi
+}
+
+nfs_mount_stop() {
+    local target delay
+    for opt in target delay
+    do
+        config_get "$opt" "$1" "$opt"
+    done
+    if grep -qs $target /proc/mounts; then
+        umount -fr $target
+        sleep $delay
+    fi
+}
+
+start_service() {
+    echo > /etc/exports
+    config_load "nfs"
+    config_foreach nfs_share share
+    exportfs -r
+    config_foreach nfs_mount mount
+}
+
+stop_service() {
+    nfs_share_stop
+    config_foreach nfs_mount_stop mount
+}
+
+service_triggers() {
+  procd_add_reload_trigger nfs
+}

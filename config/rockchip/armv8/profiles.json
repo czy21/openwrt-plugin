@@ -1,0 +1,42 @@
+{
+    "arch_packages": "aarch64_generic",
+    "profiles": {
+        "friendlyarm_nanopi-r2s": {
+            "user_configs": [
+                "ROOTFS_PARTSIZE=1024"
+            ],
+            "user_packages": [
+                "{{ simple | join(' ') }}",
+                "{{ common | join(' ') }}"
+            ]
+        },
+        "friendlyarm_nanopi-r4s": {
+            "user_configs": [
+                "ROOTFS_PARTSIZE=1024"
+            ],
+            "user_packages": [
+                "{{ simple | join(' ') }}",
+                "{{ common | join(' ') }}"
+            ]
+        },
+        "friendlyarm_nanopi-r5s": {
+            "user_configs": [
+                "ROOTFS_PARTSIZE=1024"
+            ],
+            "user_packages": [
+                "{{ simple | join(' ') }}",
+                "{{ common | join(' ') }}"
+            ]
+        },
+        "friendlyarm_nanopi-r5c": {
+            "user_configs": [
+                "ROOTFS_PARTSIZE=1024"
+            ],
+            "user_packages": [
+                "{{ simple | join(' ') }}",
+                "{{ common | join(' ') }}"
+            ]
+        }
+    },
+    "target": "rockchip/armv8"
+}

@@ -1,0 +1,11 @@
+{
+	"luci-app-nfs": {
+		"description": "Grant access to NFS configuration",
+		"read": {
+			"uci": [ "nfs"]
+		},
+		"write": {
+			"uci": [ "nfs" ]
+		}
+	}
+}
