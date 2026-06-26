@@ -1,0 +1,15 @@
+{
+    "arch_packages": "aarch64_cortex-a53",
+    "profiles": {
+        "xunlong_orangepi-zero3": {
+            "user_configs": [
+                "ROOTFS_PARTSIZE=1024"
+            ],
+            "user_packages": [
+                "{{ simple | join(' ') }}",
+                "{{ common | join(' ') }}"
+            ]
+        }
+    },
+    "target": "sunxi/cortexa53"
+}

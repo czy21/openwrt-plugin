@@ -1,0 +1,21 @@
+{
+    "arch_packages": "x86_64",
+    "profiles": {
+        "generic": {
+            "user_configs": [
+                "ROOTFS_PARTSIZE=1024",
+                "CONFIG_VMDK_IMAGES=y",
+                "CONFIG_ISO_IMAGES=y"
+            ],
+            "user_packages": [
+                "coreutils-rm",
+                "coreutils-cp",
+                "coreutils-mv",
+                "{{ simple | join(' ') }}",
+                "{{ common | join(' ') }}",
+                "{{ docker | join(' ') }}"
+            ]
+        }
+    },
+    "target": "x86/64"
+}

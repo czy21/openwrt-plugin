@@ -1,0 +1,17 @@
+{
+    "arch_packages": "aarch64_cortex-a53",
+    "profiles": {
+        "rpi-3": {
+            "user_configs":[
+                "ROOTFS_PARTSIZE=1024"
+            ],
+            "user_packages":[
+                "-dnsmasq",
+                "dnsmasq-full",
+                "kmod-usb-dwc2",
+                "kmod-usb-net-cdc-ether"
+            ]
+        }
+    },
+    "target": "bcm27xx/bcm2710"
+}

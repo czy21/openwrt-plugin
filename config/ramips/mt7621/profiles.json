@@ -1,0 +1,17 @@
+{
+  "arch_packages": "mipsel_24kc",
+  "profiles": {
+    "d-team_newifi-d2": {
+      "user_packages": [
+        "{{ simple_32M | join(' ') }}"
+      ]
+    },
+    "jdcloud_re-sp-01b": {
+      "user_configs": [],
+      "user_packages": [
+        "{{ simple_32M | join(' ') }}"
+      ]
+    }
+  },
+  "target": "ramips/mt7621"
+}
