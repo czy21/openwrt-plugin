@@ -1,0 +1,30 @@
+name: Build packages
+
+on:
+  push:
+    paths:
+      - applications/**
+      - net/**
+      - utils/**
+  workflow_dispatch:
+    inputs:
+      mirror: 
+        type: choice
+        required: true
+        default: https://openwrt-dlc.czy21.com/openwrt
+        options: 
+          - https://downloads.openwrt.org
+          - https://openwrt-dlc.czy21.com/openwrt
+      packages:
+        type: string
+        description: "packages: adguardhome dnsproxy"
+      debug:
+        type: boolean
+        default: false
+jobs:
+  build:
+    uses: czy21/share/.github/workflows/openwrt-build-package.yml@main
+    with: 
+      mirror: ${{ inputs.mirror || 'https://openwrt-dlc.czy21.com/openwrt' }}
+      packages: ${{ inputs.packages }}
+      debug: ${{ inputs.debug || false }}

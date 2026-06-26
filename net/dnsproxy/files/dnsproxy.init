@@ -1,0 +1,110 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2023 Bruce Chen <a805899926@gmail.com>
+
+START=90
+STOP=10
+
+USE_PROCD=1
+PROG="/usr/bin/dnsproxy"
+
+section_enabled() {
+  config_get_bool enabled "$1" 'enabled' 0
+  [ $enabled -gt 0 ]
+}
+
+append_param() {
+  local value
+  config_get value $1 $2
+  [ -n "$value" ] && procd_append_param command --${2//_/-} $value
+}
+
+append_param_bool() {
+  local value
+  config_get_bool value $1 $2 0
+  [ "$value" -eq 1 ] && procd_append_param command --${2//_/-}
+}
+
+start_instance() {
+  local name="$1"
+
+  section_enabled "$name" || {
+    return 1
+  }
+  
+  [ ! -d "/var/run" ] && mkdir -p "/var/run"
+
+  local log_file=/var/log/dnsproxy.$name.log
+  echo '' > $log_file
+
+  config_get_bool debug "$name" debug 0
+
+  procd_open_instance "$name"
+  procd_set_param command "$PROG" --output $log_file
+
+  for i in "listen" "port" "bootstrap" "fallback" "upstream" "https_port" "tls_port" "quic_port" "private_rdns_upstream"; do
+    config_list_foreach "$name" $i "procd_append_param command --${i//_/-}"
+  done
+
+  append_param "$name" tls_min_version
+  append_param "$name" tls_max_version
+  append_param "$name" ratelimit
+  append_param "$name" bogus_nxdomain
+  append_param "$name" udp_buf_size
+  append_param "$name" max_go_routines
+
+  append_param_bool "$name" insecure
+  append_param_bool "$name" http3
+  append_param_bool "$name" all_servers
+  append_param_bool "$name" fastest_addr
+  append_param_bool "$name" refuse_any
+  append_param_bool "$name" ipv6_disabled
+
+  append_param_bool "$name" cache && {
+    append_param "$name" cache_size
+    append_param "$name" cache_min_ttl
+    append_param "$name" cache_max_ttl
+    append_param_bool "$name" cache_optimistic
+  }
+
+  append_param_bool "$name" endns && {
+    append_param "$name" edns_addr
+  }
+
+  append_param_bool "$name" dns64 && {
+    config_list_foreach "$name" dns64_prefix "procd_append_param command --dns64-prefix"
+  }
+
+  [ "$debug" -eq 1 ] && procd_append_param command --verbose
+
+  procd_set_param respawn
+
+  procd_close_instance
+}
+
+start_service() {
+  local instance="$1"
+  local instance_found=0
+
+  config_cb() {
+    local type="$1"
+    local name="$2"
+    if [ "$type" = "dnsproxy" ]; then
+      if [ -n "$instance" -a "$instance" = "$name" ]; then
+        instance_found=1
+      fi
+    fi
+  }
+
+  config_load "dnsproxy"
+
+  if [ -n "$instance" ]; then
+    [ "$instance_found" -gt 0 ] || return
+    start_instance "$instance"
+  else
+    config_foreach start_instance 'dnsproxy'
+  fi
+}
+
+service_triggers() {
+  procd_add_reload_trigger dnsproxy
+}

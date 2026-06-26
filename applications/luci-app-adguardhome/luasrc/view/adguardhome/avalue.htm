@@ -1,0 +1,5 @@
+<%+cbi/valueheader%>
+<a href="javascript:void(0);" onclick="window.open((window.location.origin.match(/^(.+):\d+$/) && window.location.origin.match(/^(.+):\d+$/)[1] || window.location.origin) + ':' + <%=self:cfgvalue(section) or self.default or ""%>,'_blank');">
+	<%=self:cfgvalue(section) or self.default or ""%>
+</a>
+<%+cbi/valuefooter%>

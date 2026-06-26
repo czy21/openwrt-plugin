@@ -1,0 +1,17 @@
+{
+	"luci-app-adguardhome": {
+		"description": "Grant access to AdguardHome configuration",
+		"read": {
+			"file": {
+				"/etc/adguardhome/*": [ "read" ]
+			},
+			"uci": [ "adguardhome"]
+		},
+		"write": {
+			"file": {
+				"/etc/adguardhome/*": [ "write" ]
+			},
+			"uci": [ "adguardhome" ]
+		}
+	}
+}
