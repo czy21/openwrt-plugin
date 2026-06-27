@@ -221,7 +221,12 @@ jobs:
           ln -snf /data/apk.key private-key.pem
           ln -snf /data/pri.key key-build
           
-          find ${{ steps.set_env.outputs.download_package_dir }} -mindepth 2 -maxdepth 2 -type d -exec sh -c 'f={};a=$(basename $(dirname $f));echo "Generating index for package $f";make -j6 package/index CONFIG_SIGNED_PACKAGES=y CONFIG_TARGET_ARCH_PACKAGES=$a PACKAGE_SUBDIRS=$f V=s' \;
+          find ${{ steps.set_env.outputs.download_package_dir }} -mindepth 2 -maxdepth 2 -type d -exec sh -c 'f={};a=$(basename $(dirname $f));echo "Generating index for package $f";make -j6 package/index CONFIG_SIGNED_PACKAGES=y CONFIG_TARGET_ARCH_PACKAGES=$a PACKAGE_SUBDIRS=$f' \;
+          curl -sSL https://raw.githubusercontent.com/czy21/share/main/.github/workflows/scripts/openwrt-pkg_merge.py | \
+            python3 - --artifact-dir ${{ steps.set_env.outputs.download_dir }} \
+                      --artifact-ext ${{ steps.set_env.outputs.download_dir }}/immortalwrt \
+                      --package-rel ${{ steps.set_env.outputs.artifact_package_rel }} \
+                      --package-merge-name plugin | xargs -r rm -fv
 
   clean:
     name: Clean
