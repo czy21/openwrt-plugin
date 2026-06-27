@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=traefik
-PKG_VERSION:=3.4.1
+PKG_VERSION:=3.7.5
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-v$(PKG_VERSION).src.tar.gz
 PKG_SOURCE_URL:=https://github.com/traefik/traefik/releases/download/v$(PKG_VERSION)/
-PKG_HASH:=8d971571725057b2e8bdcc2441f9612f75fa3780cff62cfd52fbe3872786ca29
+PKG_HASH:=09e44f902945eeced6521c0e561c31c3bdf19f82882945aca049ae31a8e9055d
 
 PKG_LICENSE=MIT
 PKG_LICENSE_FILES:=LICENSE.md
@@ -18,8 +18,8 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_BUILD_FLAGS:=no-mips16
 
-TRAEFIK_BUILD_CODENAME:=chaource
-TRAEFIK_BUILD_DATE:=$(shell date -d @$(SOURCE_DATE_EPOCH) +%FT%TZ%z)
+TRAEFIK_BUILD_CODENAME:=langres
+TRAEFIK_BUILD_DATE:=$(shell date -d @$(SOURCE_DATE_EPOCH) +%FT%TZ)
 
 GO_PKG:=github.com/traefik/traefik/v3
 GO_PKG_LDFLAGS:=-w -s
@@ -37,7 +37,7 @@ define Package/traefik
   CATEGORY:=Network
   TITLE:=Traefik web server
   URL:=https://github.com/traefik/traefik
-  DEPENDS:=@(aarch64||arm||i386||i686||riscv64||x86_64) +ca-bundle
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
 define Package/traefik/conffiles
