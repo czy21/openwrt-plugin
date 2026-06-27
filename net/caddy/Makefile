@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=caddy
-PKG_VERSION:=2.9.1
+PKG_VERSION:=2.11.4
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/caddyserver/caddy/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=beb52478dfb34ad29407003520d94ee0baccbf210d1af72cebf430d6d7dd7b63
+PKG_HASH:=2c3d02078286a6282cdb4d1d8744077788d556659dac0b64d8ed5886a7e5aeb9
 
 PKG_LICENSE=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
