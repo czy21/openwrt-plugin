@@ -53,7 +53,7 @@ jobs:
           echo "branchs=$JSON" >> $GITHUB_OUTPUT
 
           wget https://downloads.openwrt.org/snapshots/.targets.json -O .targets.json
-          python3 -B .github/workflows/scripts/openwrt-get_targets.py | while read v;do echo "$v" >> "$GITHUB_OUTPUT"; done
+          python3 -B .github/workflows/scripts/openwrt-get_targets.py -t all | while read v;do echo "$v" >> "$GITHUB_OUTPUT"; done
 
   plugin-main:
     name: Plugin (main)
