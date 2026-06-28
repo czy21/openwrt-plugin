@@ -1,9 +1,9 @@
-name: Build images
+name: Build devices
 
 on:
   push:
     paths:
-      - config/**/profiles.json
+      - target/linux/**
   workflow_dispatch:
     inputs:
       mirror: 
@@ -23,7 +23,7 @@ on:
 
 jobs:
   build:
-    uses: czy21/share/.github/workflows/openwrt-build-image.yml@main
+    uses: czy21/share/.github/workflows/openwrt-build-target.yml@main
     with: 
       mirror: ${{ inputs.mirror || 'https://openwrt-dlc.czy21.com/openwrt' }}
       version: ${{ inputs.version }}
