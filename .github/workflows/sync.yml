@@ -97,38 +97,46 @@ jobs:
 
       - name: Sync main
         run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          
           main_files=(
-            .github/workflows/build-*
             .gitignore
           )
+          
+          mkdir -p .github/workflows
+          cp -rfv feeds/main/.github/workflows/build-* .github/workflows/ 2>/dev/null || true
 
           for file in "${main_files[@]}"; do
             mkdir -p "$(dirname "$file")"
-            cp -rfv feeds/main/$file "$(dirname "$file")/" 2>/dev/null
+            cp -rfv feeds/main/$file "$(dirname "$file")/" 2>/dev/null || true
           done
 
-          exclude_args=()
-          for file in "${main_files[@]}"; do
-            exclude_args+=(":(exclude)$file")
-          done
+          exclude_args=(
+            ":(exclude).github/workflows"
+            ":(exclude).gitignore"
+          )
 
           if [ -z "$(git diff-tree --no-commit-id --name-only -r HEAD -- . "${exclude_args[@]}")" ]; then
-            git add "${main_files[@]}" 2>/dev/null
-            git diff --cached --quiet || git commit --amend --no-edit
+            git add .github/workflows/build-* .gitignore 2>/dev/null || true
+            git diff --cached --quiet || (git commit --amend --no-edit && git push origin HEAD --force-with-lease)
           fi
 
-          cp -rfv feeds/main/main.sh .
-
       - name: Determine update
-        run: bash main.sh update
+        run: |
+          cp -rfv feeds/main/main.sh .
+          bash main.sh update
+          git checkout -- main.sh 2>/dev/null || rm -rf main.sh
 
       - name: Determine changes
         run: |
-          rm -rf main.sh
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          if [ -n "$(git status -s)" ];then
-            git pull && git add . && git commit -m "CI: sync code" && git push
+          if [ -n "$(git status -s)" ]; then
+              git add .
+              git reset HEAD main.sh 2>/dev/null || true 
+              
+              git commit -m "CI: sync code"
+              git pull --rebase origin HEAD
+              git push origin HEAD
           fi
           
   mirror:
