@@ -97,10 +97,26 @@ jobs:
 
       - name: Sync main
         run: |
-          mkdir -p .github/workflows/
-          rm -rfv .github/workflows/scripts
-          cp -rfv feeds/main/.github/workflows/build-* .github/workflows/
-          cp -rfv feeds/main/.gitignore .
+          main_files=(
+            .github/workflows/build-*
+            .gitignore
+          )
+
+          for file in "${main_files[@]}"; do
+            mkdir -p "$(dirname "$file")"
+            cp -rfv feeds/main/$file "$(dirname "$file")/" 2>/dev/null
+          done
+
+          exclude_args=()
+          for file in "${main_files[@]}"; do
+            exclude_args+=(":(exclude)$file")
+          done
+
+          if [ -z "$(git diff-tree --no-commit-id --name-only -r HEAD -- . "${exclude_args[@]}")" ]; then
+            git add "${main_files[@]}" 2>/dev/null
+            git diff --cached --quiet || git commit --amend --no-edit
+          fi
+
           cp -rfv feeds/main/main.sh .
 
       - name: Determine update
