@@ -8,9 +8,9 @@
     <link rel="icon" href="favicon.ico" />
     <link rel="stylesheet" href="index.css" />
     <script src="config.js"></script>
-    <script src="index.js"></script>
+    <script type="module" src="js/main.js"></script>
   </head>
-  <body onload="init()">
+  <body>
     <!-- header across the whole page -->
     <header>
       <div>
@@ -37,15 +37,18 @@
             <option value="fr">Français (French)</option>
             <option value="ga">Gaeilge (Irish)</option>
             <option value="gl">Galego (Galician)</option>
+            <option value="hi">हिंदी (Hindi)</option>
             <option value="hu">Magyar (Hungarian)</option>
             <option value="id">Bahasa Indonesia (Indonesian)</option>
             <option value="it">Italiano (Italian)</option>
-            <option value="ja">日本 (Japanese)</option>
+            <option value="ja">日本語 (Japanese)</option>
             <option value="ka">ქართული (Georgian)</option>
             <option value="ko">한국어 (Korean)</option>
+            <option value="lo">Laotian (ພາສາລາວ)</option>
             <option value="lt">Lietuvių (Lithuanian)</option>
             <option value="lv">Latviešu (Latvian)</option>
             <option value="ml">മലയാളം (Malayalam)</option>
+            <option value="mr">मराठी (Marathi)</option>
             <option value="no">Norsk (Norwegian)</option>
             <option value="pl">Polski (Polish)</option>
             <option value="pt">Português (Portuguese)</option>
@@ -55,9 +58,12 @@
             <option value="ro">Română (Romanian)</option>
             <option value="ru">Русский (Russian)</option>
             <option value="sgs">Žemaitiu kalba (Samogitian)</option>
-            <option value="sr">Српски (Serbian)</option>
+            <option value="sr_Cyrl">Српски (Serbian)</option>
+            <option value="sr_Latn">Srpski (Serbian)</option>
             <option value="sk">Slovenčina (Slovak)</option>
             <option value="sv">Svenska (Swedish)</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="th">แบบไทย (Thai)</option>
             <option value="te">తెలుగు (Telugu)</option>
             <option value="tr">Türkçe (Turkish)</option>
             <option value="uk">Українська (Ukrainian)</option>
@@ -153,28 +159,12 @@
                   </div>
                 </div>
                 <div>
-                  <h5>Repositories</h5>
-                  <span>Mirror:</span>
-                  <select id="asu-mirror"></select>
-                  <textarea
-                    rows="10"
-                    id="repositories"
-                    autocomplete="off"
-                    spellcheck="false"
-                    autocapitalize="off"
-                    style="width:-webkit-fill-available"
-                  ></textarea>
-                </div>
-                <div>
-                  <h5>Repositories Keys</h5>
-                  <textarea
-                    rows="10"
-                    id="repositories-keys"
-                    autocomplete="off"
-                    spellcheck="false"
-                    autocapitalize="off"
-                    style="width:-webkit-fill-available"
-                  ></textarea>
+                  <span>ROOTFS PARTSIZE: </span>
+                  <input
+                    id="rootfs-partsize"
+                    type="number"
+                    max="1024"
+                  ></input>
                 </div>
                 <div>
                   <h5>Default Packages</h5>
@@ -189,15 +179,7 @@
                   ></textarea>
                 </div>
                 <div>
-                  <span>ROOTFS PARTSIZE: </span>
-                  <input
-                    id="rootfs-partsize"
-                    type="number"
-                    max="1024"
-                  ></input>
-                </div>
-                <div>
-                  <h5 class="tr-packages">Installed Packages</h5>
+                  <h4 class="tr-packages">Installed Packages</h4>
                   <textarea
                     rows="10"
                     id="asu-packages"
@@ -206,9 +188,9 @@
                     autocapitalize="off"
                   ></textarea>
                 </div>
-                <h5 class="tr-defaults">
+                <h4 class="tr-defaults">
                   Script to run on first boot (uci-defaults)
-                </h5>
+                </h4>
                 <div id="uci-defaults-group">
                   <textarea
                     rows="10"
@@ -222,12 +204,10 @@
                     data-link="uci-defaults/setup.sh"
                   ></span>
                 </div>
-                <div id="request-build-link" class="hide">
-                  <a href="javascript:buildAsuRequest()" class="custom-link">
-                    <span></span
-                    ><span class="tr-request-build">REQUEST BUILD</span>
-                  </a>
-                </div>
+                <a href="#" id="asu-request-build" class="custom-link">
+                  <span></span
+                  ><span class="tr-request-build">REQUEST BUILD</span>
+                </a>
               </details>
             </div>
           </div>
@@ -247,43 +227,23 @@
         </div>
 
         <div id="footer">
-          <span id="all-downloads"
-            ><a 
-              href="https://downloads.openwrt.org" class="tr-server-link"
-              target="_blank"
+          <span
+            ><a href="https://downloads.openwrt.org" class="tr-server-link"
               >All Downloads</a
             ></span
           >
           |
           <span
             ><a
-              href="https://forum.openwrt.org/t/the-openwrt-firmware-selector/81721" class="tr-feedback-link"
-              target="_blank"
+              href="https://forum.openwrt.org/t/the-openwrt-firmware-selector/81721"
+              class="tr-feedback-link"
               >Feedback</a
             ></span
           >
           |
           <span
-            ><a 
-              href="https://github.com/openwrt/firmware-selector-openwrt-org/"
-              target="_blank"
+            ><a href="https://github.com/openwrt/firmware-selector-openwrt-org/"
               >OFS <span id="ofs-version">0.0.0</span></a
-            ></span
-          >
-          |
-          <span
-            ><a 
-              href="https://github.com/czy21/openwrt-plugin/"
-              target="_blank"
-              >Github</a
-            ></span
-          >
-          |
-          <span id="firmware-selector-official"
-            ><a 
-              href="https://firmware-selector.openwrt.org"
-              target="_blank"
-              >Official</a
             ></span
           >
         </div>

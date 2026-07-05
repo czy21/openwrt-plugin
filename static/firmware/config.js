@@ -15,10 +15,14 @@ var config = {
 
   // Attended Sysupgrade Server support (optional)
   asu_url: "https://openwrt-asu.czy21.com",
-  asu_extra_packages: ["luci"],
+  asu_extra_packages: [],
+  asu_repositories_mode: "append",
+  asu_repositories: {
+    "openwrt_plugin": "https://openwrt-download.czy21.com/{package_rel}/{arch_packages}/plugin",
+  },
+  asu_repository_keys: ["RWSYv7CuMTatNjIKHxlsAiKEvMYwGsJtdFv26IOGFGJZQWa9B5U0Sbc/"],
   repository_mirrors: [
     "https://downloads.openwrt.org",
     "https://mirrors.ustc.edu.cn/openwrt"
-  ],
-  repository_keys: ["RWSYv7CuMTatNjIKHxlsAiKEvMYwGsJtdFv26IOGFGJZQWa9B5U0Sbc/"]
+  ]
 };

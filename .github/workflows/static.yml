@@ -10,7 +10,7 @@ jobs:
   deploy:
     runs-on: self-hosted
     container:
-      image: czy21/openwrt-builder
+      image: openwrt/imagebuilder:x86-64-main
       volumes:
         - openwrt-share:/data/
       options: --user root --privileged --pull always
@@ -23,15 +23,14 @@ jobs:
         with: 
           repository: openwrt/firmware-selector-openwrt-org
           path: feeds/firmware-selector-openwrt-org
-      
-      - name: Setup firmware-selector-openwrt-org config.json
-        run: |
-          cp -rv static/firmware/* feeds/firmware-selector-openwrt-org/www/
-          cd feeds/firmware-selector-openwrt-org/www/
-          sed -i "s;%GIT_VERSION%;$(git describe --tags);" index.js
+          ref: "v5.1.0"
 
       - name: Deploy firmware-selector-openwrt-org to local
-        run: cp -r feeds/firmware-selector-openwrt-org/www/* /data/firmware/
+        run: |
+          mkdir -p /data/firmware/
+          cp -rv feeds/firmware-selector-openwrt-org/www/* /data/firmware/
+          cp -rv static/firmware/* /data/firmware/
+          sed -i "s;%GIT_VERSION%;$(git describe --tags);" /data/firmware/js/main.js
 
       - name: Checkout openwrt-download-page
         uses: actions/checkout@v6
