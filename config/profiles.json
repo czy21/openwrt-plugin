@@ -28,7 +28,6 @@
       "luci-app-adguardhome",
       "luci-app-dnsproxy",
       "luci-app-smartdns",
-      "luci-app-socat",
       "luci-app-openvpn",
       "openvpn-openssl",
       "openvpn-easy-rsa",
