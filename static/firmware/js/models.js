@@ -70,7 +70,7 @@ export function changeModel(version, overview, title, context) {
         mobj.images = mobj.profiles[entry.id].images;
         mobj.titles = mobj.profiles[entry.id].titles;
         mobj.device_packages = mobj.profiles[entry.id].device_packages;
-        mobj.user_packages = mobj.profiles[entry.id].user_packages;
+        mobj.user_packages = mobj.profiles[entry.id].user_packages || [];
         updateImages(version, mobj);
         setCurrentDevice({
           version: version,
