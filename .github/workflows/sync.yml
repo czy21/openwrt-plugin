@@ -112,16 +112,6 @@ jobs:
             cp -rfv feeds/main/$file "$(dirname "$file")/" 2>/dev/null || true
           done
 
-          exclude_args=(
-            ":(exclude).github/workflows"
-            ":(exclude).gitignore"
-          )
-
-          if [ -z "$(git diff-tree --no-commit-id --name-only -r HEAD -- . "${exclude_args[@]}")" ]; then
-            git add .github/workflows/build-* .gitignore 2>/dev/null || true
-            git diff --cached --quiet || (git commit --amend --no-edit && git push origin HEAD --force-with-lease)
-          fi
-
       - name: Determine update
         run: |
           cp -rfv feeds/main/main.sh .
@@ -132,11 +122,9 @@ jobs:
         run: |
           if [ -n "$(git status -s)" ]; then
               git add .
-              git reset HEAD main.sh 2>/dev/null || true 
-              
               git commit -m "CI: sync code"
-              git pull --rebase origin HEAD
-              git push origin HEAD
+              git pull --rebase
+              git push
           fi
           
   mirror:

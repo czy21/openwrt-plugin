@@ -1,0 +1,31 @@
+name: Build targets
+
+on:
+  push:
+    paths:
+      - target/linux/**
+  workflow_dispatch:
+    inputs:
+      mirror: 
+        type: choice
+        required: true
+        default: https://openwrt-dlc.czy21.com/openwrt
+        options: 
+          - https://downloads.openwrt.org
+          - https://mirrors.ustc.edu.cn/openwrt
+          - https://openwrt-dlc.czy21.com/openwrt
+      version:
+        type: string
+        description: "version: 24.10.2"
+      targets:
+        type: string
+        description: "targets: x86/64 rockchip/armv8 ... or all"
+
+jobs:
+  build:
+    uses: czy21/share/.github/workflows/openwrt-build-target.yml@main
+    with: 
+      mirror: ${{ inputs.mirror || 'https://openwrt-dlc.czy21.com/openwrt' }}
+      version: ${{ inputs.version }}
+      targets: ${{ inputs.targets }}
+    
