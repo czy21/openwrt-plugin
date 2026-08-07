@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - target/linux/**
+      - package/boot/**
   workflow_dispatch:
     inputs:
       mirror: 
@@ -20,6 +21,9 @@ on:
       targets:
         type: string
         description: "targets: x86/64 rockchip/armv8 ... or all"
+      buildbot:
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -28,4 +32,5 @@ jobs:
       mirror: ${{ inputs.mirror || 'https://openwrt-dlc.czy21.com/openwrt' }}
       version: ${{ inputs.version }}
       targets: ${{ inputs.targets }}
+      buildbot: ${{ inputs.buildbot || false }}
     
