@@ -11,10 +11,11 @@ on:
       mirror: 
         type: choice
         required: true
-        default: https://downloads.openwrt.org
+        default: https://openwrt-dlc.czy21.com/openwrt
         options: 
           - https://downloads.openwrt.org
           - https://mirrors.ustc.edu.cn/openwrt
+          - https://openwrt-dlc.czy21.com/openwrt
 
 jobs:
   setup:
@@ -126,7 +127,7 @@ jobs:
               git pull --rebase
               git push
           fi
-          
+
   mirror:
     name: Mirror
     runs-on: self-hosted
