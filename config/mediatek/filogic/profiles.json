@@ -1,6 +1,13 @@
 {
   "arch_packages": "aarch64_cortex-a53",
   "profiles": {
+    "ikuai_q3000-ubi": {
+       "user_configs": [],
+      "user_packages": [
+        "{{ simple_128M | join(' ') }}"
+      ],
+      "custom": true
+    },
     "qihoo_360t7": {
        "user_configs": [
         "CONFIG_LUCI_LANG_zh-cn=y"
