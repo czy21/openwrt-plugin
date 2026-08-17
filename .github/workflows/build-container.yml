@@ -1,0 +1,19 @@
+name: Build and push containers
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        description: "version: 24.10.2"
+      targets:
+        type: string
+        description: "targets: x86/64 rockchip/armv8 ... or all"
+
+jobs:
+  build:
+    uses: czy21/share/.github/workflows/openwrt-build-container.yml@main
+    with: 
+      version: ${{ inputs.version }}
+      targets: ${{ inputs.targets }}
+    
