@@ -82,6 +82,8 @@ export function createAsuRequestBuilder(context) {
     const selectedVersion = $("#versions").value;
     const reposMode = config.asu_repositories_mode;
     const buildBody = {
+      base_container: $("#base_container").value,
+      rootfs_size_mb: $("#rootfs-partsize").value || null,
       profile: currentDevice.id,
       target: currentDevice.target,
       packages: split($("#asu-packages").value),

@@ -27,5 +27,6 @@ var config = {
   repository_mirrors: [
     "https://downloads.openwrt.org",
     "https://mirrors.ustc.edu.cn/openwrt"
-  ]
+  ],
+  base_container: 'registry.czy21.com/openwrt/imagebuilder'
 };

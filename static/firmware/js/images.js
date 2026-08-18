@@ -171,6 +171,7 @@ export function updateImages(version, mobj, context) {
   $$("#download-extras2 *").forEach((e) => e.remove());
 
   if (mobj) {
+    $("#base_container").value = mobj.custom ? config.base_container : ''
     if ("asu_image_url" in mobj) {
       mobj.image_folder = mobj.asu_image_url;
     } else {
