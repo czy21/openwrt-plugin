@@ -52,8 +52,8 @@
     "simple_128M":[
       "-dnsmasq",
       "kmod-tcp-bbr",
-      "kmod-nf-tproxy",
-      "kmod-nf-socket",
+      "kmod-nft-tproxy",
+      "kmod-nft-socket",
       "dnsmasq-full",
       "softethervpn5-server",
       "openssh-client",
