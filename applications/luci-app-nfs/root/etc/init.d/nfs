@@ -13,10 +13,12 @@ nfs_share() {
     done
     
     if [ "$enabled" = 1 ]; then
+        set -f
         for c in $(echo "$clients" | tr ',' ' ' | tr -s ' '); do
             [ -n "$c" ] || continue
             printf "%s\t%s\n" "$path" "$c($options)" >> /etc/exports
         done
+        set +f
     fi
 }
 
