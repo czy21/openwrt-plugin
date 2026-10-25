@@ -63,7 +63,6 @@ function sparse_checkout_main() {
   source_dir=feeds/czy21/openwrt-plugin
   source_packages=
   source_packages+="applications "
-  source_packages+="net/acme-sync "
   source_packages+="net/openvpn-auth "
 
   source_checkout=
