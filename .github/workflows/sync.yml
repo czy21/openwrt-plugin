@@ -137,8 +137,6 @@ jobs:
       fail-fast: false
       matrix:
         branch: ${{fromJson(needs.setup.outputs.branchs)}}
-        include:
-          - branch: main
     container:
       image: openwrt/sdk:x86-64-main
       volumes:
@@ -194,8 +192,6 @@ jobs:
         working-directory: /builder
         shell: su buildbot -c "bash {0}"
         run: |
-          echo 'immortalwrt-org' > rsync-immortalwrt-password
-          chmod 600 rsync-immortalwrt-password
           archs="${{ join(fromJson(needs.setup.outputs.archs),' ') }}"
           
           packages=
@@ -213,7 +209,7 @@ jobs:
           immortalwrt_dir=${{ steps.set_env.outputs.download_dir }}/immortalwrt
           mkdir -p $immortalwrt_dir
 
-          rsync --password-file=rsync-immortalwrt-password -avmR --include-from=include-archs-packages --include=*/ --exclude=* rsync://firmwarepublic@rsync-mirror.infra.immortalwrt.org/firmware-public/${{ steps.set_env.outputs.artifact_package_rel }} $immortalwrt_dir
+          rsync -avmR --include-from=include-archs-packages --include=*/ --exclude=* rsync://mirrors.jlu.edu.cn/immortalwrt/${{ steps.set_env.outputs.artifact_package_rel }} $immortalwrt_dir
           
           for t in $archs;do
             src_arch=${{ steps.set_env.outputs.download_dir }}/immortalwrt/${{ steps.set_env.outputs.artifact_package_rel }}/$t
